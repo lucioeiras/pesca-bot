@@ -1,0 +1,272 @@
+[
+	{
+		"name": "Vara de madeira",
+		"xpRequired": 0,
+		"rarityModifier": 1.0,
+		"xpModifier": 1.0,
+		"depthModifier": 2.0,
+		"weightModifier": 1.0,
+		"emoji": "🎣🌳"
+	},
+	{
+		"name": "Vara de bambu",
+		"xpRequired": 100,
+		"rarityModifier": 1.02,
+		"xpModifier": 1.03,
+		"depthModifier": 2.2,
+		"weightModifier": 1.05,
+		"emoji": "🎣🎍"
+	},
+	{
+		"name": "Vara simples",
+		"xpRequired": 200,
+		"rarityModifier": 1.04,
+		"xpModifier": 1.06,
+		"depthModifier": 2.4,
+		"weightModifier": 1.1,
+		"emoji": "🎣"
+	},
+	{
+		"name": "Vara reforçada",
+		"xpRequired": 350,
+		"rarityModifier": 1.06,
+		"xpModifier": 1.09,
+		"depthModifier": 2.6,
+		"weightModifier": 1.15,
+		"emoji": "🎣🛠️"
+	},
+	{
+		"name": "Vara fibra de vidro",
+		"xpRequired": 500,
+		"rarityModifier": 1.08,
+		"xpModifier": 1.12,
+		"depthModifier": 2.8,
+		"weightModifier": 1.2,
+		"emoji": "🎣🪸"
+	},
+	{
+		"name": "Vara avançada",
+		"xpRequired": 700,
+		"rarityModifier": 1.1,
+		"xpModifier": 1.15,
+		"depthModifier": 3.0,
+		"weightModifier": 1.25,
+		"emoji": "🎣⚡"
+	},
+	{
+		"name": "Vara de carbono",
+		"xpRequired": 950,
+		"rarityModifier": 1.12,
+		"xpModifier": 1.18,
+		"depthModifier": 3.2,
+		"weightModifier": 1.3,
+		"emoji": "🎣⚫"
+	},
+	{
+		"name": "Vara Pro",
+		"xpRequired": 1200,
+		"rarityModifier": 1.14,
+		"xpModifier": 1.21,
+		"depthModifier": 3.5,
+		"weightModifier": 1.35,
+		"emoji": "🎣🐟"
+	},
+	{
+		"name": "Vara Elite",
+		"xpRequired": 1500,
+		"rarityModifier": 1.16,
+		"xpModifier": 1.24,
+		"depthModifier": 3.8,
+		"weightModifier": 1.4,
+		"emoji": "🎣💼"
+	},
+	{
+		"name": "Vara Mestre",
+		"xpRequired": 1850,
+		"rarityModifier": 1.18,
+		"xpModifier": 1.27,
+		"depthModifier": 4.1,
+		"weightModifier": 1.45,
+		"emoji": "🎣🎓"
+	},
+	{
+		"name": "Vara Suprema",
+		"xpRequired": 2250,
+		"rarityModifier": 1.2,
+		"xpModifier": 1.3,
+		"depthModifier": 4.4,
+		"weightModifier": 1.5,
+		"emoji": "🎣💎"
+	},
+	{
+		"name": "Vara Titanium",
+		"xpRequired": 2700,
+		"rarityModifier": 1.22,
+		"xpModifier": 1.33,
+		"depthModifier": 4.7,
+		"weightModifier": 1.55,
+		"emoji": "🎣🔩"
+	},
+	{
+		"name": "Vara Genesis",
+		"xpRequired": 3200,
+		"rarityModifier": 1.25,
+		"xpModifier": 1.36,
+		"depthModifier": 5.0,
+		"weightModifier": 1.6,
+		"emoji": "🎣🌌"
+	},
+	{
+		"name": "Vara Lendária I",
+		"xpRequired": 3750,
+		"rarityModifier": 1.28,
+		"xpModifier": 1.39,
+		"depthModifier": 5.5,
+		"weightModifier": 1.65,
+		"emoji": "🎣👑"
+	},
+	{
+		"name": "Vara Lendária II",
+		"xpRequired": 4350,
+		"rarityModifier": 1.31,
+		"xpModifier": 1.42,
+		"depthModifier": 6.0,
+		"weightModifier": 1.7,
+		"emoji": "🎣👑"
+	},
+	{
+		"name": "Vara Lendária III",
+		"xpRequired": 5000,
+		"rarityModifier": 1.34,
+		"xpModifier": 1.45,
+		"depthModifier": 6.5,
+		"weightModifier": 1.75,
+		"emoji": "🎣👑"
+	},
+	{
+		"name": "Vara Lendária IV",
+		"xpRequired": 5700,
+		"rarityModifier": 1.37,
+		"xpModifier": 1.48,
+		"depthModifier": 7.0,
+		"weightModifier": 1.8,
+		"emoji": "🎣👑"
+	},
+	{
+		"name": "Vara Mítica I",
+		"xpRequired": 6450,
+		"rarityModifier": 1.4,
+		"xpModifier": 1.51,
+		"depthModifier": 7.5,
+		"weightModifier": 1.85,
+		"emoji": "🎣🐉"
+	},
+	{
+		"name": "Vara Mítica II",
+		"xpRequired": 7250,
+		"rarityModifier": 1.43,
+		"xpModifier": 1.54,
+		"depthModifier": 8.0,
+		"weightModifier": 1.9,
+		"emoji": "🎣🐉"
+	},
+	{
+		"name": "Vara Mítica III",
+		"xpRequired": 8100,
+		"rarityModifier": 1.46,
+		"xpModifier": 1.57,
+		"depthModifier": 8.5,
+		"weightModifier": 1.95,
+		"emoji": "🎣🐉"
+	},
+	{
+		"name": "Vara Mítica IV",
+		"xpRequired": 9000,
+		"rarityModifier": 1.49,
+		"xpModifier": 1.6,
+		"depthModifier": 9.0,
+		"weightModifier": 2.0,
+		"emoji": "🎣🐉"
+	},
+	{
+		"name": "Vara Profunda I",
+		"xpRequired": 9950,
+		"rarityModifier": 1.52,
+		"xpModifier": 1.63,
+		"depthModifier": 9.5,
+		"weightModifier": 2.05,
+		"emoji": "🎣🦈"
+	},
+	{
+		"name": "Vara Profunda II",
+		"xpRequired": 10950,
+		"rarityModifier": 1.55,
+		"xpModifier": 1.66,
+		"depthModifier": 10.0,
+		"weightModifier": 2.1,
+		"emoji": "🎣🦈"
+	},
+	{
+		"name": "Vara Profunda III",
+		"xpRequired": 12000,
+		"rarityModifier": 1.58,
+		"xpModifier": 1.69,
+		"depthModifier": 10.5,
+		"weightModifier": 2.15,
+		"emoji": "🎣🦈"
+	},
+	{
+		"name": "Vara Profunda IV",
+		"xpRequired": 13100,
+		"rarityModifier": 1.61,
+		"xpModifier": 1.72,
+		"depthModifier": 11.0,
+		"weightModifier": 2.2,
+		"emoji": "🎣🦈"
+	},
+	{
+		"name": "Vara Suprema I",
+		"xpRequired": 14250,
+		"rarityModifier": 1.64,
+		"xpModifier": 1.75,
+		"depthModifier": 11.5,
+		"weightModifier": 2.25,
+		"emoji": "🎣💎"
+	},
+	{
+		"name": "Vara Suprema II",
+		"xpRequired": 15450,
+		"rarityModifier": 1.67,
+		"xpModifier": 1.78,
+		"depthModifier": 12.0,
+		"weightModifier": 2.3,
+		"emoji": "🎣💎"
+	},
+	{
+		"name": "Vara Suprema III",
+		"xpRequired": 16700,
+		"rarityModifier": 1.7,
+		"xpModifier": 1.81,
+		"depthModifier": 12.5,
+		"weightModifier": 2.35,
+		"emoji": "🎣💎"
+	},
+	{
+		"name": "Vara Suprema IV",
+		"xpRequired": 18000,
+		"rarityModifier": 1.73,
+		"xpModifier": 1.84,
+		"depthModifier": 13.0,
+		"weightModifier": 2.4,
+		"emoji": "🎣💎"
+	},
+	{
+		"name": "Vara Lendária Final",
+		"xpRequired": 19350,
+		"rarityModifier": 1.75,
+		"xpModifier": 1.9,
+		"depthModifier": 15.0,
+		"weightModifier": 2.5,
+		"emoji": "🎣👑🐉💎"
+	}
+]

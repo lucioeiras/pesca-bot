@@ -1,10 +1,10 @@
-import type { Fish } from '../types/fishes'
+import type { Fish } from '../types/fish'
 
 export const getRarity = ({
 	vulnerability,
 	maxLength,
 	commonLength,
-	maxWeight,
+	weight,
 	abundance,
 }: Fish): { score: number; category: string } => {
 	const vScore =
@@ -13,7 +13,7 @@ export const getRarity = ({
 			: 0
 	const lengthScore = maxLength ? Math.min(maxLength / 300, 1) : 0
 	const commonLengthScore = commonLength ? Math.min(commonLength / 300, 1) : 0
-	const weightScore = maxWeight ? Math.min(maxWeight / 100000, 1) : 0
+	const weightScore = weight ? Math.min(weight / 100000, 1) : 0
 
 	let abundanceScore = 0.5
 	if (abundance) {
