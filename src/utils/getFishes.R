@@ -2,25 +2,27 @@ library(rfishbase)
 library(dplyr)
 library(jsonlite)
 
-# Garanta o formato CSV para evitar erros do pacote
-country_tbl  <- fb_tbl("country")
+# Tabelas principais
+garantir_csv <- function(tbl) fb_tbl(tbl)
+country_tbl  <- garantir_csv("country")
 br           <- country_tbl %>% filter(C_Code == "076")
-
-comnames_tbl <- fb_tbl("comnames")
+comnames_tbl <- garantir_csv("comnames")
 br_names_pt  <- comnames_tbl %>% filter(SpecCode %in% br$SpecCode, Language == "Portuguese")
+species_tbl  <- garantir_csv("species")
 
-species_tbl  <- fb_tbl("species")
-
-# Junte a base de espécies BR com nomes científicos e nomes comuns em português
+# Junte as tabelas -- preserve 'Abundance' do country_tbl/br!
 br_species <- br %>%
   left_join(species_tbl, by = "SpecCode") %>%
   left_join(br_names_pt %>% select(SpecCode, ComName), by = "SpecCode")
 
-# Filtre apenas linhas com nome comum não nulo
-br_species <- br_species %>% filter(!is.na(ComName))
+# Apenas linhas com nome comum
+tem_nome <- br_species %>% filter(!is.na(ComName))
 
-# Supondo que sua tabela principal é br_species
-limpo <- br_species %>%
+# Se 'Abundance' não existir (caso raro), crie como branco para padronizar
+tem_nome$Abundance <- if(!"Abundance" %in% names(tem_nome)) " " else tem_nome$Abundance
+
+# Seleciona e renomeia colunas para JSON "clean"
+limpo <- tem_nome %>%
   select(
     name = ComName,
     genus = Genus,
@@ -29,9 +31,12 @@ limpo <- br_species %>%
     commonLength = CommonLength,
     maxWeight = Weight,
     depthMax = DepthRangeDeep,
-    vulnerability = Vulnerability
+    vulnerability = Vulnerability,
+    abundance = Abundance
+  ) %>%
+  mutate(
+    abundance = ifelse(is.na(abundance) | abundance == "NA", " ", as.character(abundance))
   )
 
-# Salve como JSON com o novo formato
-dados_json <- toJSON(limpo, pretty = TRUE, auto_unbox = TRUE)
-write(dados_json, "src/data/fishes.json")
+# Salva o JSON
+write_json(limpo, "src/data/fishes.json", pretty = TRUE, auto_unbox = TRUE)

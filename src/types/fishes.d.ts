@@ -6,7 +6,8 @@ export type Fish = {
   commonLength: number,
   maxWeight: number,
   depthMax: number,
-  vulnerability: number
+  vulnerability: number,
+  abundance: string,
 }
 
 export type Fishes = Fish[];
