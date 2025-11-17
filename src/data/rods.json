@@ -1,7 +1,7 @@
 [
 	{
 		"name": "Vara de madeira",
-		"xpRequired": 0,
+		"xpNext": 2000,
 		"rarityModifier": 1.0,
 		"xpModifier": 1.0,
 		"depthModifier": 2.0,
@@ -10,7 +10,7 @@
 	},
 	{
 		"name": "Vara de bambu",
-		"xpRequired": 100,
+		"xpNext": 4800,
 		"rarityModifier": 1.02,
 		"xpModifier": 1.03,
 		"depthModifier": 2.2,
@@ -19,7 +19,7 @@
 	},
 	{
 		"name": "Vara simples",
-		"xpRequired": 200,
+		"xpNext": 11520,
 		"rarityModifier": 1.04,
 		"xpModifier": 1.06,
 		"depthModifier": 2.4,
@@ -28,7 +28,7 @@
 	},
 	{
 		"name": "Vara reforçada",
-		"xpRequired": 350,
+		"xpNext": 27648,
 		"rarityModifier": 1.06,
 		"xpModifier": 1.09,
 		"depthModifier": 2.6,
@@ -37,7 +37,7 @@
 	},
 	{
 		"name": "Vara fibra de vidro",
-		"xpRequired": 500,
+		"xpNext": 66355,
 		"rarityModifier": 1.08,
 		"xpModifier": 1.12,
 		"depthModifier": 2.8,
@@ -46,7 +46,7 @@
 	},
 	{
 		"name": "Vara avançada",
-		"xpRequired": 700,
+		"xpNext": 159253,
 		"rarityModifier": 1.1,
 		"xpModifier": 1.15,
 		"depthModifier": 3.0,
@@ -55,7 +55,7 @@
 	},
 	{
 		"name": "Vara de carbono",
-		"xpRequired": 950,
+		"xpNext": 382206,
 		"rarityModifier": 1.12,
 		"xpModifier": 1.18,
 		"depthModifier": 3.2,
@@ -64,7 +64,7 @@
 	},
 	{
 		"name": "Vara Pro",
-		"xpRequired": 1200,
+		"xpNext": 917295,
 		"rarityModifier": 1.14,
 		"xpModifier": 1.21,
 		"depthModifier": 3.5,
@@ -73,7 +73,7 @@
 	},
 	{
 		"name": "Vara Elite",
-		"xpRequired": 1500,
+		"xpNext": 2201508,
 		"rarityModifier": 1.16,
 		"xpModifier": 1.24,
 		"depthModifier": 3.8,
@@ -82,7 +82,7 @@
 	},
 	{
 		"name": "Vara Mestre",
-		"xpRequired": 1850,
+		"xpNext": 5283620,
 		"rarityModifier": 1.18,
 		"xpModifier": 1.27,
 		"depthModifier": 4.1,
@@ -91,7 +91,7 @@
 	},
 	{
 		"name": "Vara Suprema",
-		"xpRequired": 2250,
+		"xpNext": 12680687,
 		"rarityModifier": 1.2,
 		"xpModifier": 1.3,
 		"depthModifier": 4.4,
@@ -100,7 +100,7 @@
 	},
 	{
 		"name": "Vara Titanium",
-		"xpRequired": 2700,
+		"xpNext": 30433648,
 		"rarityModifier": 1.22,
 		"xpModifier": 1.33,
 		"depthModifier": 4.7,
@@ -109,7 +109,7 @@
 	},
 	{
 		"name": "Vara Genesis",
-		"xpRequired": 3200,
+		"xpNext": 73040756,
 		"rarityModifier": 1.25,
 		"xpModifier": 1.36,
 		"depthModifier": 5.0,
@@ -118,7 +118,7 @@
 	},
 	{
 		"name": "Vara Lendária I",
-		"xpRequired": 3750,
+		"xpNext": 175297815,
 		"rarityModifier": 1.28,
 		"xpModifier": 1.39,
 		"depthModifier": 5.5,
@@ -127,7 +127,7 @@
 	},
 	{
 		"name": "Vara Lendária II",
-		"xpRequired": 4350,
+		"xpNext": 420714755,
 		"rarityModifier": 1.31,
 		"xpModifier": 1.42,
 		"depthModifier": 6.0,
@@ -136,7 +136,7 @@
 	},
 	{
 		"name": "Vara Lendária III",
-		"xpRequired": 5000,
+		"xpNext": 1010225411,
 		"rarityModifier": 1.34,
 		"xpModifier": 1.45,
 		"depthModifier": 6.5,
@@ -145,7 +145,7 @@
 	},
 	{
 		"name": "Vara Lendária IV",
-		"xpRequired": 5700,
+		"xpNext": 2424540986,
 		"rarityModifier": 1.37,
 		"xpModifier": 1.48,
 		"depthModifier": 7.0,
@@ -154,7 +154,7 @@
 	},
 	{
 		"name": "Vara Mítica I",
-		"xpRequired": 6450,
+		"xpNext": 5822357510,
 		"rarityModifier": 1.4,
 		"xpModifier": 1.51,
 		"depthModifier": 7.5,
@@ -163,7 +163,7 @@
 	},
 	{
 		"name": "Vara Mítica II",
-		"xpRequired": 7250,
+		"xpNext": 13973658024,
 		"rarityModifier": 1.43,
 		"xpModifier": 1.54,
 		"depthModifier": 8.0,
@@ -172,7 +172,7 @@
 	},
 	{
 		"name": "Vara Mítica III",
-		"xpRequired": 8100,
+		"xpNext": 33536779258,
 		"rarityModifier": 1.46,
 		"xpModifier": 1.57,
 		"depthModifier": 8.5,
@@ -181,7 +181,7 @@
 	},
 	{
 		"name": "Vara Mítica IV",
-		"xpRequired": 9000,
+		"xpNext": 80532270219,
 		"rarityModifier": 1.49,
 		"xpModifier": 1.6,
 		"depthModifier": 9.0,
@@ -190,7 +190,7 @@
 	},
 	{
 		"name": "Vara Profunda I",
-		"xpRequired": 9950,
+		"xpNext": 193277448526,
 		"rarityModifier": 1.52,
 		"xpModifier": 1.63,
 		"depthModifier": 9.5,
@@ -199,7 +199,7 @@
 	},
 	{
 		"name": "Vara Profunda II",
-		"xpRequired": 10950,
+		"xpNext": 464005876463,
 		"rarityModifier": 1.55,
 		"xpModifier": 1.66,
 		"depthModifier": 10.0,
@@ -208,7 +208,7 @@
 	},
 	{
 		"name": "Vara Profunda III",
-		"xpRequired": 12000,
+		"xpNext": 1113614103511,
 		"rarityModifier": 1.58,
 		"xpModifier": 1.69,
 		"depthModifier": 10.5,
@@ -217,7 +217,7 @@
 	},
 	{
 		"name": "Vara Profunda IV",
-		"xpRequired": 13100,
+		"xpNext": 2672673848427,
 		"rarityModifier": 1.61,
 		"xpModifier": 1.72,
 		"depthModifier": 11.0,
@@ -226,7 +226,7 @@
 	},
 	{
 		"name": "Vara Suprema I",
-		"xpRequired": 14250,
+		"xpNext": 6414417236224,
 		"rarityModifier": 1.64,
 		"xpModifier": 1.75,
 		"depthModifier": 11.5,
@@ -235,7 +235,7 @@
 	},
 	{
 		"name": "Vara Suprema II",
-		"xpRequired": 15450,
+		"xpNext": 15394601366937,
 		"rarityModifier": 1.67,
 		"xpModifier": 1.78,
 		"depthModifier": 12.0,
@@ -244,7 +244,7 @@
 	},
 	{
 		"name": "Vara Suprema III",
-		"xpRequired": 16700,
+		"xpNext": 36947043280649,
 		"rarityModifier": 1.7,
 		"xpModifier": 1.81,
 		"depthModifier": 12.5,
@@ -253,7 +253,7 @@
 	},
 	{
 		"name": "Vara Suprema IV",
-		"xpRequired": 18000,
+		"xpNext": 88672903873557,
 		"rarityModifier": 1.73,
 		"xpModifier": 1.84,
 		"depthModifier": 13.0,
@@ -262,7 +262,7 @@
 	},
 	{
 		"name": "Vara Lendária Final",
-		"xpRequired": 19350,
+		"xpNext": 212815944896537,
 		"rarityModifier": 1.75,
 		"xpModifier": 1.9,
 		"depthModifier": 15.0,

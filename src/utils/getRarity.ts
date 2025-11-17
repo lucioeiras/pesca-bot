@@ -1,4 +1,4 @@
-import type { Fish } from '../types/fish'
+import type { Fish } from '../models/fish'
 
 export const getRarity = ({
 	vulnerability,

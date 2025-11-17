@@ -1,16 +1,33 @@
-import type { Fish } from '../types/fish'
-import type { Rod } from '../types/rod'
+import type { Rod } from './rod'
 import type { Trash } from '../types/trash'
 
 import fishes from '../data/fishes.json'
 import trash from '../data/trash.json'
 
-type GetFishReturn = {
+export type Fish = {
+	id: string
+	name: string
+	genus: string
+	species: string
+	maxLength: number
+	commonLength: number
+	weight: number
+	maxWeight: number
+	depthMax: number
+	vulnerability: number
+	abundance: string
+	rarity: {
+		score: number
+		category: string
+	}
+}
+
+type GetRandomFishReturn = {
 	fish: Fish | null
 	trash: Trash | null
 }
 
-export const getFish = (rod: Rod): GetFishReturn => {
+export const getRandomFish = (rod: Rod): GetRandomFishReturn => {
 	const garbageChance = 0.12
 
 	if (Math.random() < garbageChance) {
@@ -43,7 +60,6 @@ export const getFish = (rod: Rod): GetFishReturn => {
 		alvo -= chances[i]!
 	}
 
-	// Se não sobrou peixe, retorna sempre um lixo
 	return {
 		fish: null,
 		trash: trash[Math.floor(Math.random() * trash.length)]!,

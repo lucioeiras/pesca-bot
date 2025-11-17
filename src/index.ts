@@ -6,8 +6,7 @@ import { ObjectId } from 'mongodb'
 
 import { collections, connectToDatabase } from './config/db'
 
-import rods from './data/rods.json'
-import type User from './models/user'
+import User, { createEmptyUser } from './models/user'
 import { play } from './utils/play'
 
 await connectToDatabase()
@@ -35,27 +34,13 @@ client.on('message_create', async (message) => {
 			const number = contact.number
 			const senderId = message.author || message.from
 
-			const user = (await collections.users?.findOne({ number })) as User
+			let user = (await collections.users?.findOne({ number })) as User
 
-			if (user) {
-				play({ user, message })
-			} else {
-				const createNewUser = await collections.users?.insertOne({
-					name: contact.pushname || senderId,
-					number,
-					rod: rods[0],
-					xp: 0,
-					fishesIds: [],
-					baits: 5,
-				})
-
-				const newUser = (await collections.users?.findOne({
-					_id: createNewUser?.insertedId,
-				})) as User
-
-				console.log(newUser)
-				play({ user: newUser, message })
+			if (!user) {
+				user = await createEmptyUser({ contact, senderId })
 			}
+
+			play({ user, message })
 		}
 	}
 })

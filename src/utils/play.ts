@@ -2,10 +2,9 @@ import type { Message } from 'whatsapp-web.js'
 
 import { collections } from '../config/db'
 
-import { getFish } from './getFish'
-import { getXP } from './getXP'
-
 import type User from '../models/user'
+import { getRandomFish } from '../models/fish'
+import { getXP } from '../models/rod'
 
 type PlayProps = {
 	user: User
@@ -13,7 +12,7 @@ type PlayProps = {
 }
 
 export const play = async ({ user, message }: PlayProps) => {
-	const { fish, trash } = getFish(user!.rod)
+	const { fish, trash } = getRandomFish(user!.rod)
 
 	if (fish) {
 		const xp = getXP(fish.rarity?.score ?? 0, fish.maxLength, fish.maxWeight)
