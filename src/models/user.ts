@@ -43,11 +43,32 @@ export const createEmptyUser = async ({
 	return newUser
 }
 
-export const handleLevelUp = async (user: User): Promise<void> => {
+export const handleLevelUp = async (user: User): Promise<Rod> => {
 	const newRod = getNewRod(user.rod)
 
 	await collections.users?.updateOne(
 		{ _id: user._id },
 		{ $set: { rod: newRod } },
+	)
+
+	return newRod
+}
+
+export const storeNewFish = async (
+	user: User,
+	fishId: UUID,
+	xp: number,
+): Promise<void> => {
+	await collections.users?.updateOne(
+		{
+			_id: user._id,
+		},
+		{
+			$set: {
+				fishesIds: [...user?.fishesIds, fishId],
+				xp: user?.xp + xp,
+				baits: user?.baits - 1,
+			},
+		},
 	)
 }

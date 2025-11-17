@@ -1,3 +1,5 @@
+import type { UUID } from 'mongodb'
+
 import type { Rod } from './rod'
 import type { Trash } from '../types/trash'
 
@@ -5,7 +7,7 @@ import fishes from '../data/fishes.json'
 import trash from '../data/trash.json'
 
 export type Fish = {
-	id: string
+	id: UUID
 	name: string
 	genus: string
 	species: string
