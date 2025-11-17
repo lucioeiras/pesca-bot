@@ -6,7 +6,11 @@ import { ObjectId } from 'mongodb'
 
 import { collections, connectToDatabase } from './config/db'
 
-import User, { createEmptyUser } from './models/user'
+import User, {
+	createEmptyUser,
+	getUserById,
+	getUserByNumber,
+} from './models/user'
 import { play } from './utils/play'
 
 await connectToDatabase()
@@ -24,9 +28,7 @@ client.on('qr', (qr) => {
 client.on('message_create', async (message) => {
 	if (message.body === '!diego-pesca' || message.body === '!diego-pescar') {
 		if (message.fromMe) {
-			const user = (await collections.users?.findOne({
-				_id: new ObjectId('691b88ac4a10b1f68a794e86'),
-			})) as User | null
+			const user = await getUserById(new ObjectId('691b88ac4a10b1f68a794e86'))
 
 			user && (await play({ user, message }))
 		} else {
@@ -34,7 +36,7 @@ client.on('message_create', async (message) => {
 			const number = contact.number
 			const senderId = message.author || message.from
 
-			let user = (await collections.users?.findOne({ number })) as User
+			let user = await getUserByNumber(number)
 
 			if (!user) {
 				user = await createEmptyUser({ contact, senderId })

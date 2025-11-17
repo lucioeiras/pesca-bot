@@ -20,8 +20,20 @@ export default class User {
 		public xp: number,
 		public fishesIds: UUID[],
 		public baits: number,
-		public lastBaitsAt: number,
+		public baitSlots: number[], // Array de 5 timestamps: 0 = slot cheio, >0 = timestamp quando ficou vazio
 	) {}
+}
+
+export const getUserById = async (id: ObjectId): Promise<User | null> => {
+	const user = (await collections.users?.findOne({ _id: id })) as User | null
+
+	return user
+}
+
+export const getUserByNumber = async (number: string): Promise<User | null> => {
+	const user = (await collections.users?.findOne({ number })) as User | null
+
+	return user
 }
 
 export const createEmptyUser = async ({
@@ -35,6 +47,7 @@ export const createEmptyUser = async ({
 		xp: 0,
 		fishesIds: [],
 		baits: 5,
+		baitSlots: [0, 0, 0, 0, 0], // Todos os slots começam cheios (0 = disponível)
 	})
 
 	const newUser = (await collections.users?.findOne({
@@ -60,6 +73,16 @@ export const storeNewFish = async (
 	fishId: UUID,
 	xp: number,
 ): Promise<void> => {
+	const now = Date.now()
+	
+	// Encontra o primeiro slot disponível (com valor 0) e marca como usado
+	const updatedSlots = [...user.baitSlots]
+	const firstAvailableIndex = updatedSlots.findIndex(slot => slot === 0)
+	
+	if (firstAvailableIndex !== -1) {
+		updatedSlots[firstAvailableIndex] = now
+	}
+
 	await collections.users?.updateOne(
 		{
 			_id: user._id,
@@ -69,7 +92,7 @@ export const storeNewFish = async (
 				fishesIds: [...user?.fishesIds, fishId],
 				xp: user?.xp + xp,
 				baits: user?.baits - 1,
-				lastBaitsAt: new Date(),
+				baitSlots: updatedSlots,
 			},
 		},
 	)
@@ -81,35 +104,34 @@ export const handleBaits = async (user: User): Promise<number> => {
 	const MAX_BAITS = 5
 	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
-	const currentBaits = user.baits
+	const updatedSlots = [...user.baitSlots]
+	let regeneratedCount = 0
 
-	if (currentBaits >= MAX_BAITS) {
-		// Se já está cheio, só atualiza o timestamp se quiser
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { lastBaitsAt: now } },
-		)
-	} else {
-		const timePassed = now - user.lastBaitsAt
-		const regenerated = Math.floor(timePassed / REGEN_INTERVAL)
-
-		if (regenerated > 0) {
-			const newBaits = Math.min(currentBaits + regenerated, MAX_BAITS)
-
-			// Atualiza o timestamp para o ponto em que a última isca foi regenerada
-			const remainder = timePassed % REGEN_INTERVAL
-			const newTimestamp = now - remainder
-
-			await collections.users?.updateOne(
-				{ _id: user._id },
-				{ $set: { baits: newBaits, lastBaitsAt: newTimestamp } },
-			)
-
-			return newBaits
+	// Para cada slot que está vazio (timestamp > 0), verifica se já regenerou
+	for (let i = 0; i < updatedSlots.length; i++) {
+		const slot = updatedSlots[i]
+		if (slot !== undefined && slot > 0) {
+			const timePassed = now - slot
+			if (timePassed >= REGEN_INTERVAL) {
+				// Slot regenerou, marca como disponível
+				updatedSlots[i] = 0
+				regeneratedCount++
+			}
 		}
 	}
 
-	return currentBaits
+	if (regeneratedCount > 0) {
+		const newBaits = user.baits + regeneratedCount
+
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baits: newBaits, baitSlots: updatedSlots } },
+		)
+
+		return newBaits
+	}
+
+	return user.baits
 }
 
 export const timeUntilNextBait = (user: User): number => {
@@ -119,12 +141,20 @@ export const timeUntilNextBait = (user: User): number => {
 	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2 horas em ms
 
 	if (user.baits >= MAX_BAITS) {
-		// Se já está cheio, não falta tempo (ou retorne 0)
+		// Se já está cheio, não falta tempo
 		return 0
 	}
 
-	const timePassed = now - user.lastBaitsAt
-	const remainder = REGEN_INTERVAL - (timePassed % REGEN_INTERVAL)
+	// Encontra o slot mais antigo que está regenerando (menor timestamp > 0)
+	const regeneratingSlots = user.baitSlots.filter(slot => slot > 0)
+	
+	if (regeneratingSlots.length === 0) {
+		return 0
+	}
 
-	return remainder > 0 ? remainder : 0
+	const oldestSlot = Math.min(...regeneratingSlots)
+	const timePassed = now - oldestSlot
+	const timeRemaining = REGEN_INTERVAL - timePassed
+
+	return timeRemaining > 0 ? timeRemaining : 0
 }

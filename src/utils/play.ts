@@ -1,9 +1,10 @@
 import type { Message } from 'whatsapp-web.js'
 
 import type User from '../models/user'
-import { getRandomFish } from '../models/fish'
+import { getRandomFish, getStats } from '../models/fish'
 import { getXP, getXPForNextRod, isLevelingUp } from '../models/rod'
 import {
+	getUserById,
 	handleBaits,
 	handleLevelUp,
 	storeNewFish,
@@ -28,15 +29,29 @@ export const play = async ({ user, message }: PlayProps) => {
 
 			await storeNewFish(user, fish.id, xp)
 
+			const userAfterFish = await getUserById(user._id)
+
+			const stats = getStats(userAfterFish!.fishesIds)
+
 			const replyMessage = {
-				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
+				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 100}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
 				rarity: `⭐ Esse é um peixe *${fish.rarity.category}*`,
 				xp: `📈 Você ganhou *${xp}* pontos de xp!`,
-				remainXp: `> 👤 Faltam ${getXPForNextRod(user.rod, user.xp + xp)} pontos de xp para o próximo nível`,
-				baits: `> 🐛 Você tem *${baits - 1}* iscas disponíveis*`,
+				total: `> 🐟 Você já pescou ${stats.userTotal} de ${stats.total} peixes`,
+				rarestFish: stats.rarestFish
+					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
+					: '',
+				heavierFish: stats.heavierFish
+					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 100}kg*!`
+					: '',
+				lighterFish: stats.lighterFish
+					? `\n> 🪶 Seu peixe mais leve é um(a) *${stats.lighterFish.name}* de *${stats.lighterFish.weight / 100}kg*!`
+					: '',
+				remainXp: `> 👤 Faltam ${getXPForNextRod(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
+				baits: `> 🐛 Você tem *${userAfterFish!.baits}* iscas disponíveis`,
 				remainTimeToNextBait:
 					baits - 1 < 5
-						? `> ⏳ Próxima isca em *${formatRemainingTime(remainTimeToNextBait)}`
+						? `> ⏳ Próxima isca em *${formatRemainingTime(remainTimeToNextBait)}*`
 						: '',
 				levelUp: '',
 			}
@@ -56,6 +71,11 @@ export const play = async ({ user, message }: PlayProps) => {
 					replyMessage.xp +
 					'\n\n' +
 					replyMessage.remainXp +
+					'\n' +
+					replyMessage.total +
+					replyMessage.rarestFish +
+					replyMessage.heavierFish +
+					replyMessage.lighterFish +
 					'\n' +
 					replyMessage.baits +
 					'\n' +

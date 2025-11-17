@@ -67,3 +67,37 @@ export const getRandomFish = (rod: Rod): GetRandomFishReturn => {
 		trash: trash[Math.floor(Math.random() * trash.length)]!,
 	}
 }
+
+type Stats = {
+	userTotal: number
+	total: number
+	rarestFish: Fish | null
+	heavierFish: Fish | null
+	lighterFish: Fish | null
+}
+
+export const getStats = (userFishes: UUID[]): Stats => {
+	const uniqueUserFishIds = new Set(userFishes.map((id) => id.toString()))
+	const totalUserFishes = uniqueUserFishIds.size
+	const totalFishes = fishes.length
+
+	const rarestFish = fishes
+		.filter((fish) => userFishes.includes(fish.id))
+		.sort((a, b) => a.rarity.score - b.rarity.score)[0]
+
+	const heavierFish = fishes
+		.filter((fish) => userFishes.includes(fish.id))
+		.sort((a, b) => b.weight - a.weight)[0]
+
+	const lighterFish = fishes
+		.filter((fish) => userFishes.includes(fish.id))
+		.sort((a, b) => a.weight - b.weight)[0]
+
+	return {
+		userTotal: totalUserFishes,
+		total: totalFishes,
+		rarestFish,
+		heavierFish,
+		lighterFish,
+	}
+}
