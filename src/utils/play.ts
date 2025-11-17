@@ -29,14 +29,14 @@ export const play = async ({ user, message }: PlayProps) => {
 			await storeNewFish(user, fish.id, xp)
 
 			const replyMessage = {
-				fish: `🐠 ${user.name} pescou um(a) ${fish.name} de ${fish.weight / 1000}kg com uma ${user.rod.name} ${user.rod.emoji}!`,
-				rarity: `⭐ Esse é um peixe ${fish.rarity.category}`,
-				xp: `📈 Você ganhou ${xp} pontos de xp!`,
+				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
+				rarity: `⭐ Esse é um peixe *${fish.rarity.category}*`,
+				xp: `📈 Você ganhou *${xp}* pontos de xp!`,
 				remainXp: `> 👤 Faltam ${getXPForNextRod(user.rod, user.xp + xp)} pontos de xp para o próximo nível`,
-				baits: `> 🐛 Você tem ${baits - 1} iscas disponíveis`,
+				baits: `> 🐛 Você tem *${baits - 1}* iscas disponíveis*`,
 				remainTimeToNextBait:
-					baits < 5
-						? `> ⏳ Próxima isca em ${formatRemainingTime(remainTimeToNextBait)}`
+					baits - 1 < 5
+						? `> ⏳ Próxima isca em *${formatRemainingTime(remainTimeToNextBait)}`
 						: '',
 				levelUp: '',
 			}
