@@ -1,5 +1,5 @@
 import { Fish } from '../models/fish'
-import User from '../models/user'
+import { User } from '../models/user'
 
 export const getHeavierRank = async (): Promise<string> => {
 	const users = await User.index()

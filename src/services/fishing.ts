@@ -3,36 +3,14 @@ import type { Contact } from 'whatsapp-web.js'
 import { Baits } from '../models/baits'
 import { Fish } from '../models/fish'
 import { Rod } from '../models/rod'
-import User from '../models/user'
+import { User } from '../models/user'
 import { XP } from '../models/xp'
 
 import { formatRemainingTime } from '../utils/formatRemainingTime'
 
 import type { User as UserType } from '../types/user'
 
-type FishingProps = {
-	contact: Contact
-	senderId: string
-	isFromMe: boolean
-}
-
-export const fishing = async ({
-	contact,
-	senderId,
-	isFromMe,
-}: FishingProps): Promise<string> => {
-	let user: UserType | null
-
-	if (isFromMe) {
-		user = await User.findByNumber('5535998974580')
-	} else {
-		user = await User.findByNumber(contact.number)
-	}
-
-	if (!user) {
-		user = await User.store({ contact, senderId })
-	}
-
+export const fishing = async (user: UserType): Promise<string> => {
 	const baits = await Baits.available(user)
 
 	if (baits > 0) {

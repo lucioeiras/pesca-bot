@@ -11,7 +11,7 @@ type CreateEmptyUserProps = {
 	senderId: string
 }
 
-export default class User {
+export class User {
 	static async index() {
 		const users = (await collections.users?.find({}).toArray()) as UserType[]
 
