@@ -7,7 +7,11 @@ export class FishingController {
 		const contact = await message.getContact()
 		const senderId = message.author || message.from
 
-		const replyMessage = await fishing({ contact, senderId })
+		const replyMessage = await fishing({
+			contact,
+			senderId,
+			isFromMe: message.fromMe,
+		})
 
 		message.reply(replyMessage)
 	}

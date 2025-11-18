@@ -8,16 +8,26 @@ import { XP } from '../models/xp'
 
 import { formatRemainingTime } from '../utils/formatRemainingTime'
 
+import type { User as UserType } from '../types/user'
+
 type FishingProps = {
 	contact: Contact
 	senderId: string
+	isFromMe: boolean
 }
 
 export const fishing = async ({
 	contact,
 	senderId,
+	isFromMe,
 }: FishingProps): Promise<string> => {
-	let user = await User.findByNumber(contact.number)
+	let user: UserType | null
+
+	if (isFromMe) {
+		user = await User.findByNumber('5535998974580')
+	} else {
+		user = await User.findByNumber(contact.number)
+	}
 
 	if (!user) {
 		user = await User.store({ contact, senderId })

@@ -2,6 +2,8 @@ import qrcode from 'qrcode-terminal'
 
 import { client } from './index.js'
 
+import './routes/message.js'
+
 client.on('qr', (qr) => {
 	qrcode.generate(qr, { small: true })
 })
