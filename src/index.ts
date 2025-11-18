@@ -55,7 +55,7 @@ client.on('message_create', async (message) => {
 			rank: usersRanked.map(
 				(user, index) =>
 					index < 10 &&
-					`\n\n${index + 1}. ${user.name}: ${user.heaviestFish!.name} de *${user.heaviestFish!.weight / 1000}kg*`,
+					`\n${index + 1}. ${user.name}: ${user.heaviestFish?.name} de *${user.heaviestFish?.weight || 0 / 1000}kg*`,
 			),
 		}
 

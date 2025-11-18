@@ -19,7 +19,7 @@ export const getXP = (
 	const baseXp = 25
 
 	// Raridade contribui fortemente: até 100 de bônus em casos lendários
-	const rarityBonus = Math.round(rarityScore * 100)
+	const rarityBonus = Math.round(rarityScore * 1000)
 
 	// Soma total
 	const totalXp = baseXp + rarityBonus

@@ -82,15 +82,15 @@ export const getStats = (userFishes: UUID[]): Stats => {
 	const totalFishes = fishes.length
 
 	const rarestFish = fishes
-		.filter((fish) => userFishes.includes(fish.id))
-		.sort((a, b) => a.rarity.score - b.rarity.score)[0]
+		.filter((fish) => uniqueUserFishIds.has(fish.id.toString()))
+		.sort((a, b) => b.rarity.score - a.rarity.score)[0]
 
 	const heavierFish = fishes
-		.filter((fish) => userFishes.includes(fish.id))
+		.filter((fish) => uniqueUserFishIds.has(fish.id.toString()))
 		.sort((a, b) => b.weight - a.weight)[0]
 
 	const lighterFish = fishes
-		.filter((fish) => userFishes.includes(fish.id))
+		.filter((fish) => uniqueUserFishIds.has(fish.id.toString()))
 		.sort((a, b) => a.weight - b.weight)[0]
 
 	return {

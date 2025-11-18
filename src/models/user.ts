@@ -33,50 +33,11 @@ export const getAllUsers = async (): Promise<User[]> => {
 export const getUserById = async (id: ObjectId): Promise<User | null> => {
 	const user = (await collections.users?.findOne({ _id: id })) as User | null
 
-	// Migração automática: garante que baitSlots existe
-	if (user && (!user.baitSlots || !Array.isArray(user.baitSlots))) {
-		const MAX_BAITS = 5
-		const emptySlots = MAX_BAITS - (user.baits || 0)
-		const newSlots = Array(MAX_BAITS).fill(0)
-
-		// Marca slots vazios com timestamp zero (prontos para uso)
-		for (let i = 0; i < MAX_BAITS - emptySlots; i++) {
-			newSlots[i] = 0
-		}
-
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { baitSlots: newSlots } },
-		)
-
-		user.baitSlots = newSlots
-	}
-
 	return user
 }
 
 export const getUserByNumber = async (number: string): Promise<User | null> => {
 	const user = (await collections.users?.findOne({ number })) as User | null
-
-	// Migração automática: garante que baitSlots existe
-	if (user && (!user.baitSlots || !Array.isArray(user.baitSlots))) {
-		const MAX_BAITS = 5
-		const emptySlots = MAX_BAITS - (user.baits || 0)
-		const newSlots = Array(MAX_BAITS).fill(0)
-
-		// Marca slots vazios com timestamp zero (prontos para uso)
-		// Os slots cheios já estão com 0
-		for (let i = 0; i < MAX_BAITS - emptySlots; i++) {
-			newSlots[i] = 0
-		}
-
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { baitSlots: newSlots } },
-		)
-
-		user.baitSlots = newSlots
-	}
 
 	return user
 }

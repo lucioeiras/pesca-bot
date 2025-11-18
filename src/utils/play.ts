@@ -44,9 +44,6 @@ export const play = async ({ user, message }: PlayProps) => {
 				heavierFish: stats.heavierFish
 					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
 					: '',
-				lighterFish: stats.lighterFish
-					? `\n> 🪶 Seu peixe mais leve é um(a) *${stats.lighterFish.name}* de *${stats.lighterFish.weight / 1000}kg*!`
-					: '',
 				remainXp: `> 👤 Faltam ${getXPForNextRod(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
 				baits: `> 🐛 Você tem *${userAfterFish!.baits}* iscas disponíveis`,
 				remainTimeToNextBait:
@@ -75,7 +72,6 @@ export const play = async ({ user, message }: PlayProps) => {
 					replyMessage.total +
 					replyMessage.rarestFish +
 					replyMessage.heavierFish +
-					replyMessage.lighterFish +
 					'\n' +
 					replyMessage.baits +
 					'\n' +
