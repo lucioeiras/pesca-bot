@@ -1,15 +1,32 @@
 # pesca-bot
 
-To install dependencies:
+Esse é um bot de pescaria 🎣🐠 para o WhatsApp!
+
+## Como executar
+
+Primeiro instale as depêndencias:
 
 ```bash
 bun install
 ```
 
-To run:
+Adicione um arquivo .env conforme o exemplo (você precisa ter um mongodb rodando):
 
-```bash
-bun run index.ts
+```
+DB_CONN_STRING="mongodb://<usuario>:<senha>mongodb@localhost:27017"
+DB_NAME="pesca-mongodb"
+USERS_COLLECTION_NAME="users"
 ```
 
-This project was created using `bun init` in bun v1.3.2. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Gere o arquivo fishes.json com os comandos:
+
+```bash
+Rscript src/utils/getFishes.R
+bun run src/utils/parseFishes.ts
+```
+
+E então você poderá executar com o comando:
+
+```bash
+bun start
+```
