@@ -4,13 +4,9 @@ import { Client } from 'whatsapp-web.js'
 import qrcode from 'qrcode-terminal'
 import { ObjectId } from 'mongodb'
 
-import { collections, connectToDatabase } from './config/db'
+import { connectToDatabase } from './config/db'
 
-import User, {
-	createEmptyUser,
-	getUserById,
-	getUserByNumber,
-} from './models/user'
+import { createEmptyUser, getUserById, getUserByNumber } from './models/user'
 import { play } from './utils/play'
 import { getHeavierRank } from './models/rank'
 
@@ -55,7 +51,7 @@ client.on('message_create', async (message) => {
 			rank: usersRanked.map(
 				(user, index) =>
 					index < 10 &&
-					`\n${index + 1}. ${user.name}: ${user.heaviestFish?.name} de *${user.heaviestFish?.weight || 0 / 1000}kg*`,
+					`\n${index + 1}. ${user.name}: ${user.heaviestFish?.name} de *${user.heaviestFish ? user.heaviestFish.weight / 1000 : 0}kg*`,
 			),
 		}
 

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import { promises as fs } from 'fs'
 import path from 'path'
 
@@ -23,10 +22,9 @@ const parsedFishesWeight = fishes.map((fish) => ({
 	weight: getWeight(fish.maxLength),
 }))
 
-const parsedFishes = parsedFishesWeight.map((fish) => ({
+const parsedFishesRarity = parsedFishesWeight.map((fish) => ({
 	...fish,
 	rarity: getRarity(fish),
-	id: uuidv4(),
 }))
 
 const filePath = path.resolve(__dirname, '../data/fishes.json')
@@ -34,7 +32,7 @@ const filePath = path.resolve(__dirname, '../data/fishes.json')
 try {
 	await fs.writeFile(
 		filePath,
-		JSON.stringify(parsedFishes, null, 2) + '\n',
+		JSON.stringify(parsedFishesRarity, null, 2) + '\n',
 		'utf8',
 	)
 } catch (err) {
