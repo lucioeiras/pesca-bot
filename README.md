@@ -13,16 +13,17 @@ bun install
 Adicione um arquivo .env conforme o exemplo (você precisa ter um mongodb rodando):
 
 ```
-DB_CONN_STRING="mongodb://<usuario>:<senha>mongodb@localhost:27017"
+DB_CONN_STRING="mongodb://diego:pescacria@localhost:27017"
 DB_NAME="pesca-mongodb"
-USERS_COLLECTION_NAME="users"
+NODE_ENV="development"
 ```
 
 Gere o arquivo fishes.json com os comandos:
 
 ```bash
-Rscript src/utils/getFishes.R
-bun run src/utils/parseFishes.ts
+Rscript src/scripts/getFishes.R
+bun run src/utils/parseFishesRarity.ts
+bun run src/utils/parseFishesWeight.ts
 ```
 
 E então você poderá executar com o comando:
