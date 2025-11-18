@@ -5,7 +5,8 @@ import { getRandomFish, getStats } from '../models/fish'
 import { getXP, getXPForNextRod, isLevelingUp } from '../models/rod'
 import {
 	getUserById,
-	handleBaits,
+	checkAvailableBaits,
+	consumeBait,
 	handleLevelUp,
 	storeNewFish,
 	timeUntilNextBait,
@@ -18,9 +19,10 @@ type PlayProps = {
 }
 
 export const play = async ({ user, message }: PlayProps) => {
-	const baits = await handleBaits(user)
+	const baits = await checkAvailableBaits(user)
 
 	if (baits > 0) {
+		await consumeBait(user)
 		const { fish, trash } = getRandomFish(user!.rod)
 
 		const userAfterFish = await getUserById(user._id)

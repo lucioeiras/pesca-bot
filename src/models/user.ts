@@ -90,12 +90,12 @@ export const storeNewFish = async (
 	)
 }
 
-export const handleBaits = async (user: User): Promise<number> => {
+export const checkAvailableBaits = async (user: User): Promise<number> => {
 	const now = Date.now()
-
 	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
 	const updatedSlots = [...user.baitSlots]
+	let needsUpdate = false
 
 	// Para cada slot que está vazio (timestamp > 0), verifica se já regenerou
 	for (let i = 0; i < updatedSlots.length; i++) {
@@ -105,25 +105,39 @@ export const handleBaits = async (user: User): Promise<number> => {
 			if (timePassed >= REGEN_INTERVAL) {
 				// Slot regenerou, marca como disponível
 				updatedSlots[i] = 0
+				needsUpdate = true
 			}
 		}
 	}
+
+	// Se houve regeneração, atualiza no banco
+	if (needsUpdate) {
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baitSlots: updatedSlots } },
+		)
+	}
+
+	// Conta quantos slots estão disponíveis (valor 0)
+	const availableBaits = updatedSlots.filter((slot) => slot === 0).length
+
+	return availableBaits
+}
+
+export const consumeBait = async (user: User): Promise<void> => {
+	const now = Date.now()
+	const updatedSlots = [...user.baitSlots]
 
 	// Encontra o primeiro slot disponível (com valor 0) e marca como usado
 	const firstAvailableIndex = updatedSlots.findIndex((slot) => slot === 0)
 	if (firstAvailableIndex !== -1) {
 		updatedSlots[firstAvailableIndex] = now
+
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baitSlots: updatedSlots } },
+		)
 	}
-
-	await collections.users?.updateOne(
-		{ _id: user._id },
-		{ $set: { baitSlots: updatedSlots } },
-	)
-
-	// Conta quantos slots estão disponíveis (valor 0) após o uso
-	const availableBaits = updatedSlots.filter((slot) => slot === 0).length
-
-	return availableBaits
 }
 
 export const timeUntilNextBait = (user: User): number => {
