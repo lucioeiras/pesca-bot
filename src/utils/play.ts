@@ -26,6 +26,9 @@ export const play = async ({ user, message }: PlayProps) => {
 		const userAfterFish = await getUserById(user._id)
 		const remainTimeToNextBait = timeUntilNextBait(userAfterFish!)
 		const stats = getStats(userAfterFish!.fishesIds)
+		const availableBaits = userAfterFish!.baitSlots.filter(
+			(slot) => slot === 0,
+		).length
 
 		const replyMessage = {
 			fish: '',
@@ -42,9 +45,9 @@ export const play = async ({ user, message }: PlayProps) => {
 				? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
 				: '',
 			remainXp: `\n> 👤 Faltam ${getXPForNextRod(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
-			baits: `> 🐛 Você tem *${userAfterFish!.baits}* iscas disponíveis`,
+			baits: `> 🐛 Você tem *${availableBaits}* iscas disponíveis`,
 			remainTimeToNextBait:
-				userAfterFish!.baits < 5
+				availableBaits < 5
 					? `> ⏳ Próxima isca em *${formatRemainingTime(remainTimeToNextBait)}*`
 					: '',
 			levelUp: '',

@@ -19,7 +19,6 @@ export default class User {
 		public rod: Rod,
 		public xp: number,
 		public fishesIds: UUID[],
-		public baits: number,
 		public baitSlots: number[],
 	) {}
 }
@@ -52,7 +51,6 @@ export const createEmptyUser = async ({
 		rod: rods[0],
 		xp: 0,
 		fishesIds: [],
-		baits: 5,
 		baitSlots: [0, 0, 0, 0, 0], // Todos os slots começam cheios (0 = disponível)
 	})
 
@@ -98,7 +96,6 @@ export const handleBaits = async (user: User): Promise<number> => {
 	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
 	const updatedSlots = [...user.baitSlots]
-	let regeneratedCount = 0
 
 	// Para cada slot que está vazio (timestamp > 0), verifica se já regenerou
 	for (let i = 0; i < updatedSlots.length; i++) {
@@ -108,7 +105,6 @@ export const handleBaits = async (user: User): Promise<number> => {
 			if (timePassed >= REGEN_INTERVAL) {
 				// Slot regenerou, marca como disponível
 				updatedSlots[i] = 0
-				regeneratedCount++
 			}
 		}
 	}
@@ -119,15 +115,15 @@ export const handleBaits = async (user: User): Promise<number> => {
 		updatedSlots[firstAvailableIndex] = now
 	}
 
-	// Calcula o novo número de iscas: adiciona as regeneradas e subtrai 1 (a que está sendo usada)
-	const newBaits = user.baits + regeneratedCount - 1
-
 	await collections.users?.updateOne(
 		{ _id: user._id },
-		{ $set: { baits: newBaits, baitSlots: updatedSlots } },
+		{ $set: { baitSlots: updatedSlots } },
 	)
 
-	return newBaits
+	// Conta quantos slots estão disponíveis (valor 0) após o uso
+	const availableBaits = updatedSlots.filter((slot) => slot === 0).length
+
+	return availableBaits
 }
 
 export const timeUntilNextBait = (user: User): number => {
@@ -136,7 +132,9 @@ export const timeUntilNextBait = (user: User): number => {
 	const MAX_BAITS = 5
 	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2 horas em ms
 
-	if (user.baits >= MAX_BAITS) {
+	const availableBaits = user.baitSlots.filter((slot) => slot === 0).length
+
+	if (availableBaits >= MAX_BAITS) {
 		// Se já está cheio, não falta tempo
 		return 0
 	}
