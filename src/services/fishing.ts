@@ -136,7 +136,6 @@ export const fishing = async ({
 				replyMessage.heavierFish +
 				'\n' +
 				replyMessage.baits +
-				'\n' +
 				replyMessage.remainTimeToNextBait +
 				replyMessage.levelUp
 			)
