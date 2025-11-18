@@ -13,5 +13,5 @@ export const getEmojiByNumber = (number: number): string => {
 		'🔟',
 	]
 
-	return emojiList[number] || ''
+	return emojiList[number + 1] || ''
 }

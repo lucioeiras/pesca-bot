@@ -20,7 +20,7 @@ export const getHeavierRank = async (): Promise<string> => {
 	})
 
 	const replyMessage = {
-		header: '🏆 Rank dos peixes mais pesados',
+		header: '🏆 Rank dos peixes mais pesados\n',
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
@@ -49,7 +49,7 @@ export const getRarestRank = async (): Promise<string> => {
 	})
 
 	const replyMessage = {
-		header: '💎 Rank dos peixes mais raros',
+		header: '💎 Rank dos peixes mais raros\n',
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
@@ -78,7 +78,7 @@ export const getTotalFishRank = async (): Promise<string> => {
 	})
 
 	const replyMessage = {
-		header: '🎣 Rank de peixes (diferentes) pescados',
+		header: '🎣 Rank de peixes (diferentes) pescados\n',
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
