@@ -27,13 +27,7 @@ export class Fish {
 			| FishType[]
 			| null
 
-		const candidates = fishes!.filter(
-			(p) =>
-				(!p.depthMax || p.depthMax <= rod.depthModifier) &&
-				(!p.maxWeight || p.maxWeight <= rod.weightModifier * 100000),
-		)
-
-		const chances = candidates.map((fish) => {
+		const chances = fishes!.map((fish) => {
 			const rarity = fish.rarity?.score ?? 0
 			const baseChance = 1 - rarity
 			const chanceMod = baseChance * rod.rarityModifier
@@ -45,8 +39,8 @@ export class Fish {
 
 		let alvo = Math.random() * total
 
-		for (let i = 0; i < candidates.length; i++) {
-			if (alvo < chances[i]!) return { fish: candidates[i]!, trash: null }
+		for (let i = 0; i < fishes!.length; i++) {
+			if (alvo < chances[i]!) return { fish: fishes![i]!, trash: null }
 			alvo -= chances[i]!
 		}
 
