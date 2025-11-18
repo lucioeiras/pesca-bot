@@ -32,3 +32,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# wwebjs cache
+.wwebjs_cache
+
+# fishes.json
+src/data/fishes.json

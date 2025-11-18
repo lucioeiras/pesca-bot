@@ -12,6 +12,7 @@ import User, {
 	getUserByNumber,
 } from './models/user'
 import { play } from './utils/play'
+import { getHeavierRank } from './models/rank'
 
 await connectToDatabase()
 
@@ -44,6 +45,23 @@ client.on('message_create', async (message) => {
 
 			play({ user, message })
 		}
+	}
+
+	if (message.body === '!diego-pesca-rank') {
+		const usersRanked = await getHeavierRank()
+
+		const replyMessage = {
+			header: '🏆 Rank dos peixes mais pesados',
+			rank: usersRanked.map(
+				(user, index) =>
+					index < 10 &&
+					`\n\n${index + 1}. ${user.name}: ${user.heaviestFish!.name} de *${user.heaviestFish!.weight / 1000}kg*`,
+			),
+		}
+
+		message.reply(
+			replyMessage.header + replyMessage.rank.filter(Boolean).join(''),
+		)
 	}
 })
 

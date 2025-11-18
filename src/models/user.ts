@@ -20,18 +20,63 @@ export default class User {
 		public xp: number,
 		public fishesIds: UUID[],
 		public baits: number,
-		public baitSlots: number[], // Array de 5 timestamps: 0 = slot cheio, >0 = timestamp quando ficou vazio
+		public baitSlots: number[],
 	) {}
+}
+
+export const getAllUsers = async (): Promise<User[]> => {
+	const users = (await collections.users?.find({}).toArray()) as User[]
+
+	return users
 }
 
 export const getUserById = async (id: ObjectId): Promise<User | null> => {
 	const user = (await collections.users?.findOne({ _id: id })) as User | null
+
+	// Migração automática: garante que baitSlots existe
+	if (user && (!user.baitSlots || !Array.isArray(user.baitSlots))) {
+		const MAX_BAITS = 5
+		const emptySlots = MAX_BAITS - (user.baits || 0)
+		const newSlots = Array(MAX_BAITS).fill(0)
+
+		// Marca slots vazios com timestamp zero (prontos para uso)
+		for (let i = 0; i < MAX_BAITS - emptySlots; i++) {
+			newSlots[i] = 0
+		}
+
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baitSlots: newSlots } },
+		)
+
+		user.baitSlots = newSlots
+	}
 
 	return user
 }
 
 export const getUserByNumber = async (number: string): Promise<User | null> => {
 	const user = (await collections.users?.findOne({ number })) as User | null
+
+	// Migração automática: garante que baitSlots existe
+	if (user && (!user.baitSlots || !Array.isArray(user.baitSlots))) {
+		const MAX_BAITS = 5
+		const emptySlots = MAX_BAITS - (user.baits || 0)
+		const newSlots = Array(MAX_BAITS).fill(0)
+
+		// Marca slots vazios com timestamp zero (prontos para uso)
+		// Os slots cheios já estão com 0
+		for (let i = 0; i < MAX_BAITS - emptySlots; i++) {
+			newSlots[i] = 0
+		}
+
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baitSlots: newSlots } },
+		)
+
+		user.baitSlots = newSlots
+	}
 
 	return user
 }
@@ -74,11 +119,11 @@ export const storeNewFish = async (
 	xp: number,
 ): Promise<void> => {
 	const now = Date.now()
-	
+
 	// Encontra o primeiro slot disponível (com valor 0) e marca como usado
 	const updatedSlots = [...user.baitSlots]
-	const firstAvailableIndex = updatedSlots.findIndex(slot => slot === 0)
-	
+	const firstAvailableIndex = updatedSlots.findIndex((slot) => slot === 0)
+
 	if (firstAvailableIndex !== -1) {
 		updatedSlots[firstAvailableIndex] = now
 	}
@@ -146,8 +191,8 @@ export const timeUntilNextBait = (user: User): number => {
 	}
 
 	// Encontra o slot mais antigo que está regenerando (menor timestamp > 0)
-	const regeneratingSlots = user.baitSlots.filter(slot => slot > 0)
-	
+	const regeneratingSlots = user.baitSlots.filter((slot) => slot > 0)
+
 	if (regeneratingSlots.length === 0) {
 		return 0
 	}

@@ -34,7 +34,7 @@ export const play = async ({ user, message }: PlayProps) => {
 			const stats = getStats(userAfterFish!.fishesIds)
 
 			const replyMessage = {
-				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 100}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
+				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
 				rarity: `⭐ Esse é um peixe *${fish.rarity.category}*`,
 				xp: `📈 Você ganhou *${xp}* pontos de xp!`,
 				total: `> 🐟 Você já pescou ${stats.userTotal} de ${stats.total} peixes`,
@@ -42,10 +42,10 @@ export const play = async ({ user, message }: PlayProps) => {
 					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
 					: '',
 				heavierFish: stats.heavierFish
-					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 100}kg*!`
+					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
 					: '',
 				lighterFish: stats.lighterFish
-					? `\n> 🪶 Seu peixe mais leve é um(a) *${stats.lighterFish.name}* de *${stats.lighterFish.weight / 100}kg*!`
+					? `\n> 🪶 Seu peixe mais leve é um(a) *${stats.lighterFish.name}* de *${stats.lighterFish.weight / 1000}kg*!`
 					: '',
 				remainXp: `> 👤 Faltam ${getXPForNextRod(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
 				baits: `> 🐛 Você tem *${userAfterFish!.baits}* iscas disponíveis`,
