@@ -11,4 +11,12 @@ client.on('message_create', (message) => {
 	if (message.body === '!diego-ranking-pesado') {
 		RankingController.getHeavierRank(message)
 	}
+
+	if (message.body === '!diego-ranking-raro') {
+		RankingController.getRarestRank(message)
+	}
+
+	if (message.body === '!diego-ranking-total') {
+		RankingController.getTotalFishRank(message)
+	}
 })
