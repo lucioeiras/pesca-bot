@@ -6,4 +6,16 @@ import { connectToDatabase } from './config/db'
 
 await connectToDatabase()
 
-export const client = new Client({})
+const NODE_ENV = process.env.NODE_ENV || 'development'
+
+const puppeteerConfig =
+	NODE_ENV === 'production'
+		? {
+				headless: true,
+				args: ['--no-sandbox', '--disable-setuid-sandbox'],
+			}
+		: {}
+
+export const client = new Client({
+	puppeteer: puppeteerConfig,
+})
