@@ -54,9 +54,7 @@ export const fishing = async ({
 			rarestFish: Fish.findRarest(userAfterFish!.fishesIds),
 			heavierFish: Fish.findHeavier(userAfterFish!.fishesIds),
 		}
-		const availableBaits = userAfterFish!.baitSlots.filter(
-			(slot) => slot === 0,
-		).length
+		const availableBaits = await Baits.total(userAfterFish!)
 
 		const replyMessage = {
 			fish: '',
