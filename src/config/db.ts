@@ -26,7 +26,5 @@ export const connectToDatabase = async () => {
 	collections.rods = rodsCollection
 	collections.trash = trashCollection
 
-	console.log(
-		`Successfully connected to database: ${db.databaseName} and collection: ${usersCollection.collectionName}`,
-	)
+	console.log(`✅ Conectou com sucesso ao MongoDB`)
 }
