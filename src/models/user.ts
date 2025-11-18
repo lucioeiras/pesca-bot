@@ -107,7 +107,6 @@ export const storeNewFish = async (
 export const handleBaits = async (user: User): Promise<number> => {
 	const now = Date.now()
 
-	const MAX_BAITS = 5
 	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
 	const updatedSlots = [...user.baitSlots]

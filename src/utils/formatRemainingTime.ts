@@ -4,7 +4,7 @@ export const formatRemainingTime = (ms: number): string => {
 	const minutes = Math.floor((totalSeconds % 3600) / 60)
 	const seconds = totalSeconds % 60
 
-	let parts: string[] = []
+	const parts: string[] = []
 	if (hours > 0) parts.push(`${hours}h`)
 	if (minutes > 0 || hours > 0) parts.push(`${minutes}min`)
 	if (hours === 0) parts.push(`${seconds}s`)
