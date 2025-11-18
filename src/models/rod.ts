@@ -11,18 +11,29 @@ export type Rod = {
 }
 
 export const getXP = (
-	rarityScore: number, // entre 0 (comum) e 1 (lendário)
+	rod: Rod,
+	rarityScore: number,
 	weight: number,
-	maxLength: number | null | undefined, // em cm
+	maxLength: number | null | undefined,
 ): number => {
-	// Defina um peso base (ex: 25 XP mínimo)
+	// XP base
 	const baseXp = 25
 
-	// Raridade contribui fortemente: até 100 de bônus em casos lendários
+	// Raridade contribui fortemente: até ~1000 em casos lendários
 	const rarityBonus = Math.round(rarityScore * 1000)
 
-	// Soma total
-	const totalXp = baseXp + rarityBonus
+	// Bônus por peso (ajuste conforme necessário)
+	const weightBonus = Math.round(weight / 100000)
+
+	// Bônus por comprimento máximo (se informado)
+	const lengthBonus = maxLength ? Math.round(maxLength / 100) : 0
+
+	// Modificador da vara (xpModifier), padrão 1
+	const xpModifier = rod?.xpModifier ?? 1
+
+	const totalXp = Math.round(
+		(baseXp + rarityBonus + weightBonus + lengthBonus) * xpModifier,
+	)
 
 	// XP nunca menor que 1
 	return Math.max(totalXp, 1)

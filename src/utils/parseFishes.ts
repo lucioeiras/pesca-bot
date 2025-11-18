@@ -7,6 +7,10 @@ import { getRarity } from './getRarity'
 import fishes from '../data/fishes.json'
 
 const getWeight = (maxLength: number): number => {
+	if (!maxLength) {
+		maxLength = 50 + Math.floor(Math.random() * 150) // comprimento aleatório entre 30 e 100 cm
+	}
+
 	const weight = Math.round(0.1 * Math.pow(maxLength, 3))
 
 	if (weight < 10) return 10
@@ -14,11 +18,15 @@ const getWeight = (maxLength: number): number => {
 	return weight
 }
 
-const parsedFishes = fishes.map((fish) => ({
+const parsedFishesWeight = fishes.map((fish) => ({
+	...fish,
+	weight: getWeight(fish.maxLength),
+}))
+
+const parsedFishes = parsedFishesWeight.map((fish) => ({
 	...fish,
 	rarity: getRarity(fish),
 	id: uuidv4(),
-	weight: getWeight(fish.maxLength),
 }))
 
 const filePath = path.resolve(__dirname, '../data/fishes.json')

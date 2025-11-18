@@ -25,7 +25,12 @@ export const play = async ({ user, message }: PlayProps) => {
 		const { fish, trash } = getRandomFish(user!.rod)
 
 		if (fish) {
-			const xp = getXP(fish.rarity?.score ?? 0, fish.maxLength, fish.maxWeight)
+			const xp = getXP(
+				user.rod,
+				fish.rarity?.score ?? 0,
+				fish.weight,
+				fish.maxLength,
+			)
 
 			await storeNewFish(user, fish.id, xp)
 
@@ -56,7 +61,7 @@ export const play = async ({ user, message }: PlayProps) => {
 			if (isLevelingUp(user.rod, user.xp + xp)) {
 				const newRod = await handleLevelUp(user)
 
-				replyMessage.levelUp = `\n\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod.name} ${newRod.emoji}`
+				replyMessage.levelUp = `\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod.name} ${newRod.emoji}`
 				replyMessage.remainXp = ''
 			}
 
