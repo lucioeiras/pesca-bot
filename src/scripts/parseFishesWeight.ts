@@ -1,8 +1,6 @@
 import { promises as fs } from 'fs'
 import path from 'path'
 
-import { getRarity } from './getRarity'
-
 import fishes from '../data/fishes.json'
 
 const getWeight = (maxLength: number): number => {
@@ -22,17 +20,12 @@ const parsedFishesWeight = fishes.map((fish) => ({
 	weight: getWeight(fish.maxLength),
 }))
 
-const parsedFishesRarity = parsedFishesWeight.map((fish) => ({
-	...fish,
-	rarity: getRarity(fish),
-}))
-
 const filePath = path.resolve(__dirname, '../data/fishes.json')
 
 try {
 	await fs.writeFile(
 		filePath,
-		JSON.stringify(parsedFishesRarity, null, 2) + '\n',
+		JSON.stringify(parsedFishesWeight, null, 2) + '\n',
 		'utf8',
 	)
 } catch (err) {

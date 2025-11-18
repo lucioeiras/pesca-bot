@@ -1,8 +1,9 @@
-import { ObjectId, UUID } from 'mongodb'
-
-import { getNewRod, type Rod } from './rod'
-import { collections } from '../config/db'
+import { ObjectId } from 'mongodb'
 import type { Contact } from 'whatsapp-web.js'
+
+import { collections } from '../config/db'
+
+import type { User as UserType } from '../types/user'
 
 import rods from '../data/rods.json'
 
@@ -12,157 +13,49 @@ type CreateEmptyUserProps = {
 }
 
 export default class User {
-	constructor(
-		public _id: ObjectId,
-		public name: string,
-		public number: string,
-		public rod: Rod,
-		public xp: number,
-		public fishesIds: UUID[],
-		public baitSlots: number[],
-	) {}
-}
+	static async index() {
+		const users = (await collections.users?.find({}).toArray()) as UserType[]
 
-export const getAllUsers = async (): Promise<User[]> => {
-	const users = (await collections.users?.find({}).toArray()) as User[]
-
-	return users
-}
-
-export const getUserById = async (id: ObjectId): Promise<User | null> => {
-	const user = (await collections.users?.findOne({ _id: id })) as User | null
-
-	return user
-}
-
-export const getUserByNumber = async (number: string): Promise<User | null> => {
-	const user = (await collections.users?.findOne({ number })) as User | null
-
-	return user
-}
-
-export const createEmptyUser = async ({
-	contact,
-	senderId,
-}: CreateEmptyUserProps): Promise<User> => {
-	const createNewUser = await collections.users?.insertOne({
-		name: contact.pushname || senderId,
-		number: contact.number,
-		rod: rods[0],
-		xp: 0,
-		fishesIds: [],
-		baitSlots: [0, 0, 0, 0, 0], // Todos os slots começam cheios (0 = disponível)
-	})
-
-	const newUser = (await collections.users?.findOne({
-		_id: createNewUser?.insertedId,
-	})) as User
-
-	return newUser
-}
-
-export const handleLevelUp = async (user: User): Promise<Rod> => {
-	const newRod = getNewRod(user.rod)
-
-	await collections.users?.updateOne(
-		{ _id: user._id },
-		{ $set: { rod: newRod } },
-	)
-
-	return newRod
-}
-
-export const storeNewFish = async (
-	user: User,
-	fishId: UUID,
-	xp: number,
-): Promise<void> => {
-	await collections.users?.updateOne(
-		{
-			_id: user._id,
-		},
-		{
-			$set: {
-				fishesIds: [...user?.fishesIds, fishId],
-				xp: user?.xp + xp,
-			},
-		},
-	)
-}
-
-export const checkAvailableBaits = async (user: User): Promise<number> => {
-	const now = Date.now()
-	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
-
-	const updatedSlots = [...user.baitSlots]
-	let needsUpdate = false
-
-	// Para cada slot que está vazio (timestamp > 0), verifica se já regenerou
-	for (let i = 0; i < updatedSlots.length; i++) {
-		const slot = updatedSlots[i]
-		if (slot !== undefined && slot > 0) {
-			const timePassed = now - slot
-			if (timePassed >= REGEN_INTERVAL) {
-				// Slot regenerou, marca como disponível
-				updatedSlots[i] = 0
-				needsUpdate = true
-			}
-		}
+		return users
 	}
 
-	// Se houve regeneração, atualiza no banco
-	if (needsUpdate) {
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { baitSlots: updatedSlots } },
-		)
+	static async findById(id: ObjectId): Promise<UserType | null> {
+		const user = (await collections.users?.findOne({
+			_id: id,
+		})) as UserType | null
+
+		return user
 	}
 
-	// Conta quantos slots estão disponíveis (valor 0)
-	const availableBaits = updatedSlots.filter((slot) => slot === 0).length
+	static async findByNumber(number: string): Promise<UserType | null> {
+		const user = (await collections.users?.findOne({
+			number,
+		})) as UserType | null
 
-	return availableBaits
-}
-
-export const consumeBait = async (user: User): Promise<void> => {
-	const now = Date.now()
-	const updatedSlots = [...user.baitSlots]
-
-	// Encontra o primeiro slot disponível (com valor 0) e marca como usado
-	const firstAvailableIndex = updatedSlots.findIndex((slot) => slot === 0)
-	if (firstAvailableIndex !== -1) {
-		updatedSlots[firstAvailableIndex] = now
-
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { baitSlots: updatedSlots } },
-		)
-	}
-}
-
-export const timeUntilNextBait = (user: User): number => {
-	const now = Date.now()
-
-	const MAX_BAITS = 5
-	const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2 horas em ms
-
-	const availableBaits = user.baitSlots.filter((slot) => slot === 0).length
-
-	if (availableBaits >= MAX_BAITS) {
-		// Se já está cheio, não falta tempo
-		return 0
+		return user
 	}
 
-	// Encontra o slot mais antigo que está regenerando (menor timestamp > 0)
-	const regeneratingSlots = user.baitSlots.filter((slot) => slot > 0)
+	static async store({
+		contact,
+		senderId,
+	}: CreateEmptyUserProps): Promise<UserType> {
+		const createNewUser = await collections.users?.insertOne({
+			name: contact.pushname || senderId,
+			number: contact.number,
+			rod: rods[0],
+			xp: 0,
+			fishesIds: [],
+			baitSlots: [0, 0, 0, 0, 0], // Todos os slots começam cheios (0 = disponível)
+		})
 
-	if (regeneratingSlots.length === 0) {
-		return 0
+		const newUser = (await collections.users?.findOne({
+			_id: createNewUser?.insertedId,
+		})) as UserType
+
+		return newUser
 	}
 
-	const oldestSlot = Math.min(...regeneratingSlots)
-	const timePassed = now - oldestSlot
-	const timeRemaining = REGEN_INTERVAL - timePassed
-
-	return timeRemaining > 0 ? timeRemaining : 0
+	static async update(user: UserType): Promise<void> {
+		await collections.users?.updateOne({ _id: user._id }, { $set: { ...user } })
+	}
 }
