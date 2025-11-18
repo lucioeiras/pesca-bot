@@ -4,17 +4,19 @@ import User from '../models/user'
 export const getHeavierRank = async (): Promise<string> => {
 	const users = await User.index()
 
-	const sortedUsers = users
-		.sort((a, b) => {
-			const aHeaviest = Fish.findHeavier(a.fishesIds)?.weight ?? 0
-			const bHeaviest = Fish.findHeavier(b.fishesIds)?.weight ?? 0
-
-			return bHeaviest - aHeaviest
-		})
-		.map((user) => ({
+	const usersWithFish = await Promise.all(
+		users.map(async (user) => ({
 			...user,
-			heaviestFish: Fish.findHeavier(user.fishesIds) ?? null,
-		}))
+			heaviestFish: await Fish.findHeavier(user.fishesIds),
+		})),
+	)
+
+	const sortedUsers = usersWithFish.sort((a, b) => {
+		const aHeaviest = a.heaviestFish?.weight ?? 0
+		const bHeaviest = b.heaviestFish?.weight ?? 0
+
+		return bHeaviest - aHeaviest
+	})
 
 	const replyMessage = {
 		header: '🏆 Rank dos peixes mais pesados',
@@ -31,17 +33,19 @@ export const getHeavierRank = async (): Promise<string> => {
 export const getRarestRank = async (): Promise<string> => {
 	const users = await User.index()
 
-	const sortedUsers = users
-		.sort((a, b) => {
-			const aRarest = Fish.findRarest(a.fishesIds)?.rarity.score ?? 0
-			const bRarest = Fish.findRarest(b.fishesIds)?.rarity.score ?? 0
-
-			return bRarest - aRarest
-		})
-		.map((user) => ({
+	const usersWithFish = await Promise.all(
+		users.map(async (user) => ({
 			...user,
-			rarestFish: Fish.findRarest(user.fishesIds) ?? null,
-		}))
+			rarestFish: await Fish.findRarest(user.fishesIds),
+		})),
+	)
+
+	const sortedUsers = usersWithFish.sort((a, b) => {
+		const aRarest = a.rarestFish?.rarity.score ?? 0
+		const bRarest = b.rarestFish?.rarity.score ?? 0
+
+		return bRarest - aRarest
+	})
 
 	const replyMessage = {
 		header: '💎 Rank dos peixes mais raros',
@@ -58,17 +62,19 @@ export const getRarestRank = async (): Promise<string> => {
 export const getTotalFishRank = async (): Promise<string> => {
 	const users = await User.index()
 
-	const sortedUsers = users
-		.sort((a, b) => {
-			const aTotal = Fish.findTotal(a.fishesIds)?.userTotal ?? 0
-			const bTotal = Fish.findTotal(b.fishesIds)?.userTotal ?? 0
-
-			return bTotal - aTotal
-		})
-		.map((user) => ({
+	const usersWithFish = await Promise.all(
+		users.map(async (user) => ({
 			...user,
-			userTotal: Fish.findTotal(user.fishesIds).userTotal ?? null,
-		}))
+			userTotal: (await Fish.findTotal(user.fishesIds)).userTotal,
+		})),
+	)
+
+	const sortedUsers = usersWithFish.sort((a, b) => {
+		const aTotal = a.userTotal ?? 0
+		const bTotal = b.userTotal ?? 0
+
+		return bTotal - aTotal
+	})
 
 	const replyMessage = {
 		header: '🎣 Rank de peixes (diferentes) pescados',

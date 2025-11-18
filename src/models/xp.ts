@@ -1,5 +1,4 @@
 import { collections } from '../config/db'
-import rods from '../data/rods.json'
 
 import type { Rod as RodType } from '../types/rod'
 import type { User as UserType } from '../types/user'
@@ -38,7 +37,14 @@ export class XP {
 		return currentRod.xpNext - currentXp
 	}
 
-	static verify(currentRod: RodType, currentXp: number): boolean {
+	static async verify(
+		currentRod: RodType,
+		currentXp: number,
+	): Promise<boolean> {
+		const rods = (await collections
+			.rods!.find({})
+			.toArray()) as unknown as RodType[]
+
 		const rodIndex = rods.findIndex((rod) => rod.name === currentRod.name)
 
 		if (rods[rodIndex] && rods[rodIndex].xpNext <= currentXp) {

@@ -3,25 +3,31 @@ import type { UUID } from 'mongodb'
 import type { Rod as RodType } from '../types/rod'
 import type { Fish as FishType } from '../types/fish'
 import type { Trash as TrashType } from '../types/trash'
-
-import fishes from '../data/fishes.json'
-import trash from '../data/trash.json'
+import { collections } from '../config/db'
 
 export class Fish {
-	static random(rod: RodType): {
+	static async random(rod: RodType): Promise<{
 		fish: FishType | null
 		trash: TrashType | null
-	} {
+	}> {
 		const garbageChance = 0.12
+
+		const randomTrash = (await collections.trash!.findOne(
+			{},
+		)) as TrashType | null
 
 		if (Math.random() < garbageChance) {
 			return {
 				fish: null,
-				trash: trash[Math.floor(Math.random() * trash.length)]!,
+				trash: randomTrash,
 			}
 		}
 
-		const candidates = fishes.filter(
+		const fishes = (await collections.fishes!.find({}).toArray()) as unknown as
+			| FishType[]
+			| null
+
+		const candidates = fishes!.filter(
 			(p) =>
 				(!p.depthMax || p.depthMax <= rod.depthModifier) &&
 				(!p.maxWeight || p.maxWeight <= rod.weightModifier * 100000),
@@ -46,34 +52,49 @@ export class Fish {
 
 		return {
 			fish: null,
-			trash: trash[Math.floor(Math.random() * trash.length)]!,
+			trash: randomTrash!,
 		}
 	}
 
-	static findRarest(userFishes: UUID[]): FishType | null {
+	static async findRarest(userFishes: UUID[]): Promise<FishType | null> {
 		const uniqueUserFishIds = new Set(userFishes.map((id) => id.toString()))
 
-		const rarestFish = fishes
+		const fishes = (await collections.fishes!.find({}).toArray()) as unknown as
+			| FishType[]
+			| null
+
+		const rarestFish = fishes!
 			.filter((fish) => uniqueUserFishIds.has(fish.id.toString()))
 			.sort((a, b) => b.rarity.score - a.rarity.score)[0]
 
 		return rarestFish || null
 	}
 
-	static findHeavier(userFishes: UUID[]): FishType | null {
+	static async findHeavier(userFishes: UUID[]): Promise<FishType | null> {
 		const uniqueUserFishIds = new Set(userFishes.map((id) => id.toString()))
 
-		const heavierFish = fishes
+		const fishes = (await collections.fishes!.find({}).toArray()) as unknown as
+			| FishType[]
+			| null
+
+		const heavierFish = fishes!
 			.filter((fish) => uniqueUserFishIds.has(fish.id.toString()))
 			.sort((a, b) => b.weight - a.weight)[0]
 
 		return heavierFish || null
 	}
 
-	static findTotal(userFishes: UUID[]): { userTotal: number; total: number } {
+	static async findTotal(
+		userFishes: UUID[],
+	): Promise<{ userTotal: number; total: number }> {
 		const uniqueUserFishIds = new Set(userFishes.map((id) => id.toString()))
+
+		const fishes = (await collections.fishes!.find({}).toArray()) as unknown as
+			| FishType[]
+			| null
+
 		const totalUserFishes = uniqueUserFishIds.size
-		const totalFishes = fishes.length
+		const totalFishes = fishes!.length
 
 		return { userTotal: totalUserFishes, total: totalFishes }
 	}

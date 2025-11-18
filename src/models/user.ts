@@ -4,8 +4,7 @@ import type { Contact } from 'whatsapp-web.js'
 import { collections } from '../config/db'
 
 import type { User as UserType } from '../types/user'
-
-import rods from '../data/rods.json'
+import type { Rod as RodType } from '../types/rod'
 
 type CreateEmptyUserProps = {
 	contact: Contact
@@ -39,6 +38,10 @@ export default class User {
 		contact,
 		senderId,
 	}: CreateEmptyUserProps): Promise<UserType> {
+		const rods = (await collections
+			.rods!.find({})
+			.toArray()) as unknown as RodType[]
+
 		const createNewUser = await collections.users?.insertOne({
 			name: contact.pushname || senderId,
 			number: contact.number,

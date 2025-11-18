@@ -1,9 +1,6 @@
-import { promises as fs } from 'fs'
-import path from 'path'
-
-import fishes from '../data/fishes.json'
-
+import 'dotenv/config'
 import type { Fish } from '../types/fish'
+import { connectToDatabase, collections } from '../config/db'
 
 const getRarity = ({
 	vulnerability,
@@ -68,20 +65,35 @@ const getRarity = ({
 	return { score, category }
 }
 
-const parsedFishesRarity = fishes.map((fish) => ({
-	...fish,
-	rarity: getRarity(fish),
-}))
+const run = async () => {
+	try {
+		await connectToDatabase()
 
-const filePath = path.resolve(__dirname, '../data/fishes.json')
+		const fishes = (await collections
+			.fishes!.find({})
+			.toArray()) as unknown as Fish[]
 
-try {
-	await fs.writeFile(
-		filePath,
-		JSON.stringify(parsedFishesRarity, null, 2) + '\n',
-		'utf8',
-	)
-} catch (err) {
-	console.error('Failed to write fishes.json:', err)
-	throw err
+		if (!fishes.length) {
+			console.log('Nenhum peixe encontrado na coleção.')
+			return
+		}
+
+		const operations = fishes.map((fish) => ({
+			updateOne: {
+				filter: { id: fish.id },
+				update: { $set: { rarity: getRarity(fish) } },
+			},
+		}))
+
+		const result = await collections.fishes!.bulkWrite(operations)
+
+		console.log(
+			`Raridade atualizada para ${operations.length} peixes. Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`,
+		)
+	} catch (err) {
+		console.error('Falha ao atualizar raridade dos peixes:', err)
+		process.exitCode = 1
+	}
 }
+
+await run()

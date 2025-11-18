@@ -1,7 +1,6 @@
-import { promises as fs } from 'fs'
-import path from 'path'
-
-import fishes from '../data/fishes.json'
+import 'dotenv/config'
+import { connectToDatabase, collections } from '../config/db'
+import type { Fish } from '../types/fish'
 
 const getWeight = (maxLength: number): number => {
 	if (!maxLength) {
@@ -15,20 +14,35 @@ const getWeight = (maxLength: number): number => {
 	return weight
 }
 
-const parsedFishesWeight = fishes.map((fish) => ({
-	...fish,
-	weight: getWeight(fish.maxLength),
-}))
+const run = async () => {
+	try {
+		await connectToDatabase()
 
-const filePath = path.resolve(__dirname, '../data/fishes.json')
+		const fishes = (await collections
+			.fishes!.find({})
+			.toArray()) as unknown as Fish[]
 
-try {
-	await fs.writeFile(
-		filePath,
-		JSON.stringify(parsedFishesWeight, null, 2) + '\n',
-		'utf8',
-	)
-} catch (err) {
-	console.error('Failed to write fishes.json:', err)
-	throw err
+		if (!fishes.length) {
+			console.log('Nenhum peixe encontrado na coleção.')
+			return
+		}
+
+		const operations = fishes.map((fish) => ({
+			updateOne: {
+				filter: { id: fish.id },
+				update: { $set: { weight: getWeight(fish.maxLength) } },
+			},
+		}))
+
+		const result = await collections.fishes!.bulkWrite(operations)
+
+		console.log(
+			`Peso atualizado para ${operations.length} peixes. Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`,
+		)
+	} catch (err) {
+		console.error('Falha ao atualizar peso dos peixes:', err)
+		process.exitCode = 1
+	}
 }
+
+await run()

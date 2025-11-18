@@ -38,7 +38,7 @@ export const fishing = async ({
 	if (baits > 0) {
 		await Baits.update(user)
 
-		const { fish, trash } = Fish.random(user!.rod)
+		const { fish, trash } = await Fish.random(user!.rod)!
 
 		const userAfterFish = await User.findById(user._id)
 
@@ -46,13 +46,13 @@ export const fishing = async ({
 		const remainTimeToNextBaitFormatted =
 			formatRemainingTime(remainTimeToNextBait)
 
-		const totalStatus = Fish.findTotal(userAfterFish!.fishesIds)
+		const totalStatus = await Fish.findTotal(userAfterFish!.fishesIds)
 
 		const stats = {
 			userTotal: totalStatus.userTotal,
 			total: totalStatus.total,
-			rarestFish: Fish.findRarest(userAfterFish!.fishesIds),
-			heavierFish: Fish.findHeavier(userAfterFish!.fishesIds),
+			rarestFish: await Fish.findRarest(userAfterFish!.fishesIds),
+			heavierFish: await Fish.findHeavier(userAfterFish!.fishesIds),
 		}
 		const availableBaits = await Baits.available(userAfterFish!)
 
@@ -93,12 +93,12 @@ export const fishing = async ({
 				fishesIds: [...userAfterFish!.fishesIds, fish.id],
 			})
 
-			if (XP.verify(user.rod, user.xp + xp)) {
-				const newRod = Rod.findNext(userAfterFish!.rod)!
+			if (await XP.verify(user.rod, user.xp + xp)) {
+				const newRod = await Rod.findNext(userAfterFish!.rod)!
 
-				await XP.levelUp(userAfterFish!, newRod)
+				await XP.levelUp(userAfterFish!, newRod!)
 
-				replyMessage.levelUp = `\n\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod.name} ${newRod.emoji}`
+				replyMessage.levelUp = `\n\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod!.name} ${newRod!.emoji}`
 				replyMessage.remainXp = ''
 			}
 
