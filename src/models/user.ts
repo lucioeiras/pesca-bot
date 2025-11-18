@@ -79,16 +79,6 @@ export const storeNewFish = async (
 	fishId: UUID,
 	xp: number,
 ): Promise<void> => {
-	const now = Date.now()
-
-	// Encontra o primeiro slot disponível (com valor 0) e marca como usado
-	const updatedSlots = [...user.baitSlots]
-	const firstAvailableIndex = updatedSlots.findIndex((slot) => slot === 0)
-
-	if (firstAvailableIndex !== -1) {
-		updatedSlots[firstAvailableIndex] = now
-	}
-
 	await collections.users?.updateOne(
 		{
 			_id: user._id,
@@ -97,8 +87,6 @@ export const storeNewFish = async (
 			$set: {
 				fishesIds: [...user?.fishesIds, fishId],
 				xp: user?.xp + xp,
-				baits: user?.baits - 1,
-				baitSlots: updatedSlots,
 			},
 		},
 	)
@@ -125,18 +113,21 @@ export const handleBaits = async (user: User): Promise<number> => {
 		}
 	}
 
-	if (regeneratedCount > 0) {
-		const newBaits = user.baits + regeneratedCount
-
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { baits: newBaits, baitSlots: updatedSlots } },
-		)
-
-		return newBaits
+	// Encontra o primeiro slot disponível (com valor 0) e marca como usado
+	const firstAvailableIndex = updatedSlots.findIndex((slot) => slot === 0)
+	if (firstAvailableIndex !== -1) {
+		updatedSlots[firstAvailableIndex] = now
 	}
 
-	return user.baits
+	// Calcula o novo número de iscas: adiciona as regeneradas e subtrai 1 (a que está sendo usada)
+	const newBaits = user.baits + regeneratedCount - 1
+
+	await collections.users?.updateOne(
+		{ _id: user._id },
+		{ $set: { baits: newBaits, baitSlots: updatedSlots } },
+	)
+
+	return newBaits
 }
 
 export const timeUntilNextBait = (user: User): number => {

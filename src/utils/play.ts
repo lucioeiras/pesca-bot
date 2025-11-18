@@ -19,10 +19,36 @@ type PlayProps = {
 
 export const play = async ({ user, message }: PlayProps) => {
 	const baits = await handleBaits(user)
-	const remainTimeToNextBait = timeUntilNextBait(user)
 
 	if (baits > 0) {
 		const { fish, trash } = getRandomFish(user!.rod)
+
+		const userAfterFish = await getUserById(user._id)
+		const remainTimeToNextBait = timeUntilNextBait(userAfterFish!)
+		const stats = getStats(userAfterFish!.fishesIds)
+
+		const replyMessage = {
+			fish: '',
+			rarity: '',
+			xp: '',
+
+			trash: '',
+
+			total: `> 🐟 Você já pescou ${stats.userTotal} de ${stats.total} peixes`,
+			rarestFish: stats.rarestFish
+				? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
+				: '',
+			heavierFish: stats.heavierFish
+				? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
+				: '',
+			remainXp: `\n> 👤 Faltam ${getXPForNextRod(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
+			baits: `> 🐛 Você tem *${userAfterFish!.baits}* iscas disponíveis`,
+			remainTimeToNextBait:
+				userAfterFish!.baits < 5
+					? `> ⏳ Próxima isca em *${formatRemainingTime(remainTimeToNextBait)}*`
+					: '',
+			levelUp: '',
+		}
 
 		if (fish) {
 			const xp = getXP(
@@ -34,36 +60,16 @@ export const play = async ({ user, message }: PlayProps) => {
 
 			await storeNewFish(user, fish.id, xp)
 
-			const userAfterFish = await getUserById(user._id)
-
-			const stats = getStats(userAfterFish!.fishesIds)
-
-			const replyMessage = {
-				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
-				rarity: `⭐ Esse é um peixe *${fish.rarity.category}*`,
-				xp: `📈 Você ganhou *${xp}* pontos de xp!`,
-				total: `> 🐟 Você já pescou ${stats.userTotal} de ${stats.total} peixes`,
-				rarestFish: stats.rarestFish
-					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
-					: '',
-				heavierFish: stats.heavierFish
-					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
-					: '',
-				remainXp: `> 👤 Faltam ${getXPForNextRod(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
-				baits: `> 🐛 Você tem *${userAfterFish!.baits}* iscas disponíveis`,
-				remainTimeToNextBait:
-					baits - 1 < 5
-						? `> ⏳ Próxima isca em *${formatRemainingTime(remainTimeToNextBait)}*`
-						: '',
-				levelUp: '',
-			}
-
 			if (isLevelingUp(user.rod, user.xp + xp)) {
-				const newRod = await handleLevelUp(user)
+				const newRod = await handleLevelUp(userAfterFish!)
 
-				replyMessage.levelUp = `\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod.name} ${newRod.emoji}`
+				replyMessage.levelUp = `\n\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod.name} ${newRod.emoji}`
 				replyMessage.remainXp = ''
 			}
+
+			replyMessage.fish = `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`
+			replyMessage.rarity = `⭐ Esse é um peixe *${fish.rarity.category}*`
+			replyMessage.xp = `📈 Você ganhou *${xp}* pontos de xp!`
 
 			message.reply(
 				replyMessage.fish +
@@ -71,7 +77,7 @@ export const play = async ({ user, message }: PlayProps) => {
 					replyMessage.rarity +
 					'\n\n' +
 					replyMessage.xp +
-					'\n\n' +
+					'\n' +
 					replyMessage.remainXp +
 					'\n' +
 					replyMessage.total +
@@ -86,11 +92,26 @@ export const play = async ({ user, message }: PlayProps) => {
 		}
 
 		if (trash) {
+			replyMessage.trash = `${user.name} pescou um(a) *${trash.name}* ${trash.emoji}. ${trash.description}`
+
 			message.reply(
-				`Você pescou um(a) ${trash.name} ${trash.emoji}. ${trash.description}`,
+				replyMessage.trash +
+					'\n' +
+					replyMessage.remainXp +
+					'\n' +
+					replyMessage.total +
+					replyMessage.rarestFish +
+					replyMessage.heavierFish +
+					'\n' +
+					replyMessage.baits +
+					'\n' +
+					replyMessage.remainTimeToNextBait +
+					replyMessage.levelUp,
 			)
 		}
 	} else {
+		const remainTimeToNextBait = timeUntilNextBait(user)
+
 		message.reply(
 			`Você tá sem isca troxão! Vai caçar o que fazer da vida porque a próxima é só em ${formatRemainingTime(remainTimeToNextBait)} ⏳`,
 		)
