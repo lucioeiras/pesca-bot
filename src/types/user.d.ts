@@ -1,3 +1,7 @@
+import type { ObjectId, UUID } from 'mongodb'
+
+import type { Rod } from './rod'
+
 export type User = {
 	_id: ObjectId
 	name: string

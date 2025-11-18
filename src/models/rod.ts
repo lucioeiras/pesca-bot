@@ -1,4 +1,3 @@
-import { use } from 'react'
 import rods from '../data/rods.json'
 
 import type { Rod as RodType } from '../types/rod'

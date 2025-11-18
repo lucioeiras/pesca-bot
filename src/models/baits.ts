@@ -3,35 +3,19 @@ import { collections } from '../config/db'
 import type { User } from '../types/user'
 
 export class Baits {
-	static async total(user: User): Promise<number> {
+	static async available(user: User): Promise<number> {
 		const now = Date.now()
 		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
-		const updatedSlots = [...user.baitSlots]
-		let needsUpdate = false
+		const updatedSlots = user.baitSlots.map((slot) =>
+			now - slot >= REGEN_INTERVAL ? 0 : slot,
+		)
 
-		// Para cada slot que está vazio (timestamp > 0), verifica se já regenerou
-		for (let i = 0; i < updatedSlots.length; i++) {
-			const slot = updatedSlots[i]
-			if (slot !== undefined && slot > 0) {
-				const timePassed = now - slot
-				if (timePassed >= REGEN_INTERVAL) {
-					// Slot regenerou, marca como disponível
-					updatedSlots[i] = 0
-					needsUpdate = true
-				}
-			}
-		}
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baitSlots: updatedSlots } },
+		)
 
-		// Se houve regeneração, atualiza no banco
-		if (needsUpdate) {
-			await collections.users?.updateOne(
-				{ _id: user._id },
-				{ $set: { baitSlots: updatedSlots } },
-			)
-		}
-
-		// Conta quantos slots estão disponíveis (valor 0)
 		const availableBaits = updatedSlots.filter((slot) => slot === 0).length
 
 		return availableBaits

@@ -1,3 +1,5 @@
+import type { UUID } from 'mongodb'
+
 export type Fish = {
 	id: UUID
 	name: string

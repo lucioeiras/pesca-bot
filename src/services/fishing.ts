@@ -33,7 +33,7 @@ export const fishing = async ({
 		user = await User.store({ contact, senderId })
 	}
 
-	const baits = await Baits.total(user)
+	const baits = await Baits.available(user)
 
 	if (baits > 0) {
 		await Baits.update(user)
@@ -54,7 +54,7 @@ export const fishing = async ({
 			rarestFish: Fish.findRarest(userAfterFish!.fishesIds),
 			heavierFish: Fish.findHeavier(userAfterFish!.fishesIds),
 		}
-		const availableBaits = await Baits.total(userAfterFish!)
+		const availableBaits = await Baits.available(userAfterFish!)
 
 		const replyMessage = {
 			fish: '',
