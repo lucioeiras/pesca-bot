@@ -6,10 +6,8 @@ import { getRarity } from './getRarity'
 
 import fishes from '../data/fishes.json'
 
-const getWeight = (maxWeight: number | null, maxLength: number): number => {
-	if (maxWeight) return maxWeight
-
-	const weight = Math.round(1 * Math.pow(maxLength, 3))
+const getWeight = (maxLength: number): number => {
+	const weight = Math.round(0.1 * Math.pow(maxLength, 3))
 
 	if (weight < 10) return 10
 
@@ -20,7 +18,7 @@ const parsedFishes = fishes.map((fish) => ({
 	...fish,
 	rarity: getRarity(fish),
 	id: uuidv4(),
-	weight: getWeight(fish.maxWeight, fish.maxLength),
+	weight: getWeight(fish.maxLength),
 }))
 
 const filePath = path.resolve(__dirname, '../data/fishes.json')
