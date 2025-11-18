@@ -76,7 +76,7 @@ export const fishing = async ({
 			baits: `> 🐛 Você tem *${availableBaits}* iscas disponíveis`,
 			remainTimeToNextBait:
 				availableBaits < 5
-					? `> ⏳ Próxima isca em *${remainTimeToNextBaitFormatted}*`
+					? `\n> ⏳ Próxima isca em *${remainTimeToNextBaitFormatted}*`
 					: '',
 			levelUp: '',
 		}
@@ -122,7 +122,6 @@ export const fishing = async ({
 				replyMessage.heavierFish +
 				'\n' +
 				replyMessage.baits +
-				'\n' +
 				replyMessage.remainTimeToNextBait +
 				replyMessage.levelUp
 			)
