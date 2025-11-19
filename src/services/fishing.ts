@@ -60,9 +60,9 @@ export const fishing = async (user: UserType): Promise<string> => {
 					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
 					: '',
 				heavierFish: stats.heavierFish
-					? `\n\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
+					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
 					: '',
-				baits: `> 🐛 Você tem *${availableBaits}* iscas disponíveis`,
+				baits: `\n> 🐛 Você tem *${availableBaits}* iscas disponíveis`,
 				remainTimeToNextBait:
 					availableBaits < 5
 						? `\n> ⏳ Próxima isca em *${remainTimeToNextBaitFormatted}*`
