@@ -14,7 +14,10 @@ export const fishing = async (user: UserType): Promise<string> => {
 	if (baits > 0) {
 		await Baits.update(user)
 
-		const { fish, trash } = await Fish.random(user!.rod)!
+		// Busca o usuário atualizado após consumir a isca
+		const userAfterBaitUpdate = await User.findById(user._id)
+
+		const { fish, trash } = await Fish.random(userAfterBaitUpdate!.rod)!
 
 		const userAfterFish = await User.findById(user._id)
 

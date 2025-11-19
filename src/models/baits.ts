@@ -7,16 +7,11 @@ export class Baits {
 		const now = Date.now()
 		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
-		const updatedSlots = user.baitSlots.map((slot) =>
-			now - slot >= REGEN_INTERVAL ? 0 : slot,
-		)
-
-		await collections.users?.updateOne(
-			{ _id: user._id },
-			{ $set: { baitSlots: updatedSlots } },
-		)
-
-		const availableBaits = updatedSlots.filter((slot) => slot === 0).length
+		// Conta quantas iscas estão disponíveis (slot === 0 ou já passou o tempo de regeneração)
+		const availableBaits = user.baitSlots.filter((slot) => {
+			if (slot === 0) return true
+			return now - slot >= REGEN_INTERVAL
+		}).length
 
 		return availableBaits
 	}
@@ -50,10 +45,14 @@ export class Baits {
 
 	static async update(user: User): Promise<void> {
 		const now = Date.now()
+		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 		const updatedSlots = [...user.baitSlots]
 
-		// Encontra o primeiro slot disponível (com valor 0) e marca como usado
-		const firstAvailableIndex = updatedSlots.findIndex((slot) => slot === 0)
+		// Encontra o primeiro slot disponível (valor 0 ou já regenerado) e marca como usado
+		const firstAvailableIndex = updatedSlots.findIndex((slot) => {
+			if (slot === 0) return true
+			return now - slot >= REGEN_INTERVAL
+		})
 
 		if (firstAvailableIndex !== -1) {
 			updatedSlots[firstAvailableIndex] = now
