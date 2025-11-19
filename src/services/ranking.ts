@@ -24,7 +24,7 @@ export const getHeavierRank = async (): Promise<string> => {
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
-				`\n${getEmojiByNumber(index)}. ${user.name}: ${user.heaviestFish?.name} de *${user.heaviestFish ? user.heaviestFish.weight / 1000 : 0}kg*`,
+				`\n${getEmojiByNumber(index)} ${user.name}: ${user.heaviestFish?.name} de *${user.heaviestFish ? user.heaviestFish.weight / 1000 : 0}kg*`,
 		),
 	}
 
@@ -53,7 +53,7 @@ export const getRarestRank = async (): Promise<string> => {
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
-				`\n${getEmojiByNumber(index)}. ${user.name}: ${user.rarestFish?.name} (*${user.rarestFish?.rarity.category}*)`,
+				`\n${getEmojiByNumber(index)} ${user.name}: ${user.rarestFish?.name} (*${user.rarestFish?.rarity.category}*)`,
 		),
 	}
 
@@ -82,7 +82,7 @@ export const getTotalFishRank = async (): Promise<string> => {
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
-				`\n${getEmojiByNumber(index)}. ${user.name}: ${user.userTotal} peixe(s)`,
+				`\n${getEmojiByNumber(index)} ${user.name}: ${user.userTotal} peixe(s)`,
 		),
 	}
 
