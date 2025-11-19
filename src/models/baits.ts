@@ -7,11 +7,26 @@ export class Baits {
 		const now = Date.now()
 		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
-		// Conta quantas iscas estão disponíveis (slot === 0 ou já passou o tempo de regeneração)
-		const availableBaits = user.baitSlots.filter((slot) => {
-			if (slot === 0) return true
-			return now - slot >= REGEN_INTERVAL
-		}).length
+		// Gera nova lista resetando somente slots cujo tempo expirou
+		let changed = false
+		const updatedSlots = user.baitSlots.map((slot) => {
+			if (slot === 0) return 0
+			if (now - slot >= REGEN_INTERVAL) {
+				changed = true
+				return 0
+			}
+			return slot
+		})
+
+		// Persistir somente se houve mudança (alguma isca regenerada)
+		if (changed) {
+			await collections.users?.updateOne(
+				{ _id: user._id },
+				{ $set: { baitSlots: updatedSlots } },
+			)
+		}
+
+		const availableBaits = updatedSlots.filter((slot) => slot === 0).length
 
 		return availableBaits
 	}
@@ -22,23 +37,31 @@ export class Baits {
 		const MAX_BAITS = 5
 		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2 horas em ms
 
-		const availableBaits = user.baitSlots.filter((slot) => slot === 0).length
+		// Tratar slots expirados como disponíveis virtualmente
+		const effectiveSlots = user.baitSlots.map((slot) => {
+			if (slot === 0) return 0
+			return now - slot >= REGEN_INTERVAL ? 0 : slot
+		})
+
+		const availableBaits = effectiveSlots.filter((slot) => slot === 0).length
 
 		if (availableBaits >= MAX_BAITS) {
-			// Se já está cheio, não falta tempo
 			return 0
 		}
 
-		// Encontra o slot mais antigo que está regenerando (menor timestamp > 0)
-		const regeneratingSlots = user.baitSlots.filter((slot) => slot > 0)
+		// Slots ainda regenerando (timestamp > 0 e não expirado)
+		const regeneratingSlots = effectiveSlots.filter((slot) => slot > 0)
 
 		if (regeneratingSlots.length === 0) {
 			return 0
 		}
 
-		const oldestSlot = Math.min(...regeneratingSlots)
-		const timePassed = now - oldestSlot
-		const timeRemaining = REGEN_INTERVAL - timePassed
+		// Menor tempo restante entre os slots ativos
+		const remainingTimes = regeneratingSlots.map((slot) => {
+			const timePassed = now - slot
+			return REGEN_INTERVAL - timePassed
+		})
+		const timeRemaining = Math.min(...remainingTimes)
 
 		return timeRemaining > 0 ? timeRemaining : 0
 	}
