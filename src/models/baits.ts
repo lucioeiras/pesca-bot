@@ -2,10 +2,12 @@ import { collections } from '../config/db'
 
 import type { User } from '../types/user'
 
+const REGEN_INTERVAL = 60 * 60 * 1000 // 1h em ms
+const MAX_BAITS = 5
+
 export class Baits {
 	static async available(user: User): Promise<number> {
 		const now = Date.now()
-		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
 
 		// Gera nova lista resetando somente slots cujo tempo expirou
 		let changed = false
@@ -33,9 +35,6 @@ export class Baits {
 
 	static async time(user: User): Promise<number> {
 		const now = Date.now()
-
-		const MAX_BAITS = 5
-		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2 horas em ms
 
 		// Tratar slots expirados como disponíveis virtualmente
 		const effectiveSlots = user.baitSlots.map((slot) => {
@@ -68,7 +67,7 @@ export class Baits {
 
 	static async update(user: User): Promise<void> {
 		const now = Date.now()
-		const REGEN_INTERVAL = 2 * 60 * 60 * 1000 // 2h em ms
+
 		const updatedSlots = [...user.baitSlots]
 
 		// Encontra o primeiro slot disponível (valor 0 ou já regenerado) e marca como usado
