@@ -7,6 +7,7 @@ import { XP } from '../models/xp'
 import { formatRemainingTime } from '../utils/formatRemainingTime'
 
 import type { User as UserType } from '../types/user'
+import { getWeightWithComma } from '../utils/getWeightWithComma'
 
 export const fishing = async (user: UserType): Promise<string> => {
 	await Baits.regen(user)
@@ -49,7 +50,7 @@ export const fishing = async (user: UserType): Promise<string> => {
 			const availableBaits = await Baits.available(userAfterFish!)
 
 			const replyMessage = {
-				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
+				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${getWeightWithComma(fish.weight)}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
 				rarity: `\n\n⭐ Esse é um peixe *${fish.rarity.category}*`,
 				xp: `\n\n📈 Você ganhou *${xp}* pontos de xp!`,
 				remainXp: `\n\n> 👤 Faltam ${XP.next(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
@@ -58,7 +59,7 @@ export const fishing = async (user: UserType): Promise<string> => {
 					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
 					: '',
 				heavierFish: stats.heavierFish
-					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
+					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${getWeightWithComma(stats.heavierFish.weight)}kg*`
 					: '',
 				baits: `\n> 🐛 Você tem *${availableBaits}* iscas disponíveis`,
 				remainTimeToNextBait:
@@ -113,7 +114,7 @@ export const fishing = async (user: UserType): Promise<string> => {
 					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
 					: '',
 				heavierFish: stats.heavierFish
-					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${stats.heavierFish.weight / 1000}kg*!`
+					? `\n> 🏆 Seu peixe mais pesado é um(a) *${stats.heavierFish.name}* de *${getWeightWithComma(stats.heavierFish.weight)}kg*`
 					: '',
 				baits: `\n> 🐛 Você tem *${availableBaits}* iscas disponíveis`,
 				remainTimeToNextBait:

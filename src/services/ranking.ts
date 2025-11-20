@@ -1,6 +1,7 @@
 import { Fish } from '../models/fish'
 import { User } from '../models/user'
 import { getEmojiByNumber } from '../utils/getEmojiByNumber'
+import { getWeightWithComma } from '../utils/getWeightWithComma'
 
 export const getHeavierRank = async (): Promise<string> => {
 	const users = await User.index()
@@ -24,7 +25,7 @@ export const getHeavierRank = async (): Promise<string> => {
 		rank: sortedUsers.map(
 			(user, index) =>
 				index < 10 &&
-				`\n${getEmojiByNumber(index)} ${user.name}: ${user.heaviestFish?.name} de *${user.heaviestFish ? user.heaviestFish.weight / 1000 : 0}kg*`,
+				`\n${getEmojiByNumber(index)} ${user.name}: ${user.heaviestFish?.name} de *${getWeightWithComma(user.heaviestFish?.weight ?? 0)}kg*`,
 		),
 	}
 
