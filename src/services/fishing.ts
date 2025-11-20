@@ -74,20 +74,20 @@ export const fishing = async (user: UserType): Promise<string> => {
 				await XP.levelUp(userAfterFish!, newRod!)
 
 				replyMessage.levelUp = `\n\n🎉 Parabéns! Você subiu de nível e ganhou uma ${newRod!.name} ${newRod!.emoji}`
-				replyMessage.remainXp = `\n\n> 👤 Faltam ${newRod?.xpNext} pontos de xp para o próximo nível`
+				replyMessage.remainXp = `\n\n> 👤 Faltam ${XP.next(newRod!, userAfterFish!.xp)} pontos de xp para o próximo nível`
 			}
 
 			return (
 				replyMessage.fish +
 				replyMessage.rarity +
 				replyMessage.xp +
+				replyMessage.levelUp +
 				replyMessage.remainXp +
 				replyMessage.total +
 				replyMessage.rarestFish +
 				replyMessage.heavierFish +
 				replyMessage.baits +
-				replyMessage.remainTimeToNextBait +
-				replyMessage.levelUp
+				replyMessage.remainTimeToNextBait
 			)
 		} else {
 			// Busca stats também quando pescar lixo
