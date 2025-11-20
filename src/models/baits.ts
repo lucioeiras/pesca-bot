@@ -7,30 +7,40 @@ const MAX_BAITS = 5
 
 export class Baits {
 	static async available(user: User): Promise<number> {
+		return user.baitSlots.filter((slot) => slot === 0).length
+	}
+
+	static async regen(user: User): Promise<void> {
 		const now = Date.now()
 
-		// Gera nova lista resetando somente slots cujo tempo expirou
-		let changed = false
-		const updatedSlots = user.baitSlots.map((slot) => {
-			if (slot === 0) return 0
-			if (now - slot >= REGEN_INTERVAL) {
-				changed = true
-				return 0
-			}
-			return slot
+		const updatedSlots = user.baitSlots.map((slot) =>
+			slot === 0 ? 0 : now - slot >= REGEN_INTERVAL ? 0 : slot,
+		)
+
+		await collections.users?.updateOne(
+			{ _id: user._id },
+			{ $set: { baitSlots: updatedSlots } },
+		)
+	}
+
+	static async consume(user: User): Promise<void> {
+		const now = Date.now()
+
+		const updatedSlots = [...user.baitSlots]
+
+		const firstAvailableIndex = updatedSlots.findIndex((slot) => {
+			if (slot === 0) return true
+			return now - slot >= REGEN_INTERVAL
 		})
 
-		// Persistir somente se houve mudança (alguma isca regenerada)
-		if (changed) {
+		if (firstAvailableIndex !== -1) {
+			updatedSlots[firstAvailableIndex] = now
+
 			await collections.users?.updateOne(
 				{ _id: user._id },
 				{ $set: { baitSlots: updatedSlots } },
 			)
 		}
-
-		const availableBaits = updatedSlots.filter((slot) => slot === 0).length
-
-		return availableBaits
 	}
 
 	static async time(user: User): Promise<number> {
@@ -63,26 +73,5 @@ export class Baits {
 		const timeRemaining = Math.min(...remainingTimes)
 
 		return timeRemaining > 0 ? timeRemaining : 0
-	}
-
-	static async update(user: User): Promise<void> {
-		const now = Date.now()
-
-		const updatedSlots = [...user.baitSlots]
-
-		// Encontra o primeiro slot disponível (valor 0 ou já regenerado) e marca como usado
-		const firstAvailableIndex = updatedSlots.findIndex((slot) => {
-			if (slot === 0) return true
-			return now - slot >= REGEN_INTERVAL
-		})
-
-		if (firstAvailableIndex !== -1) {
-			updatedSlots[firstAvailableIndex] = now
-
-			await collections.users?.updateOne(
-				{ _id: user._id },
-				{ $set: { baitSlots: updatedSlots } },
-			)
-		}
 	}
 }

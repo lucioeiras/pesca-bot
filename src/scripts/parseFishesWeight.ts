@@ -4,10 +4,10 @@ import type { Fish } from '../types/fish'
 
 const getWeight = (maxLength: number): number => {
 	if (!maxLength) {
-		maxLength = 50 + Math.floor(Math.random() * 150) // comprimento aleatório entre 30 e 100 cm
+		maxLength = 30 + Math.floor(Math.random() * 100) // comprimento aleatório entre 30 e 100 cm
 	}
 
-	const weight = Math.round(0.1 * Math.pow(maxLength, 3))
+	const weight = Math.round(0.01 * Math.pow(maxLength, 3))
 
 	if (weight < 10) return 10
 

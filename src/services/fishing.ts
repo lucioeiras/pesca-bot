@@ -9,17 +9,15 @@ import { formatRemainingTime } from '../utils/formatRemainingTime'
 import type { User as UserType } from '../types/user'
 
 export const fishing = async (user: UserType): Promise<string> => {
+	await Baits.regen(user)
 	const baits = await Baits.available(user)
 
 	if (baits > 0) {
-		await Baits.update(user)
+		await Baits.consume(user)
 
-		// Busca o usuário atualizado após consumir a isca
 		const userAfterBaitUpdate = await User.findById(user._id)
 
 		const { fish, trash } = await Fish.random(userAfterBaitUpdate!.rod)!
-
-		const userAfterFish = await User.findById(user._id)
 
 		if (fish) {
 			const xp = XP.calculate(
@@ -30,31 +28,31 @@ export const fishing = async (user: UserType): Promise<string> => {
 			)
 
 			await User.update({
-				...userAfterFish!,
-				xp: userAfterFish!.xp + xp,
-				fishesIds: [...userAfterFish!.fishesIds, fish.id],
+				...userAfterBaitUpdate!,
+				xp: userAfterBaitUpdate!.xp + xp,
+				fishesIds: [...userAfterBaitUpdate!.fishesIds, fish.id],
 			})
 
-			const userAfterStore = await User.findById(user._id)
+			const userAfterFish = await User.findById(user._id)
 
-			const remainTimeToNextBait = await Baits.time(userAfterStore!)
+			const remainTimeToNextBait = await Baits.time(userAfterFish!)
 			const remainTimeToNextBaitFormatted =
 				formatRemainingTime(remainTimeToNextBait)
 
-			const totalStatus = await Fish.findTotal(userAfterStore!.fishesIds)
+			const totalStatus = await Fish.findTotal(userAfterFish!.fishesIds)
 			const stats = {
 				userTotal: totalStatus.userTotal,
 				total: totalStatus.total,
-				rarestFish: await Fish.findRarest(userAfterStore!.fishesIds),
-				heavierFish: await Fish.findHeavier(userAfterStore!.fishesIds),
+				rarestFish: await Fish.findRarest(userAfterFish!.fishesIds),
+				heavierFish: await Fish.findHeavier(userAfterFish!.fishesIds),
 			}
-			const availableBaits = await Baits.available(userAfterStore!)
+			const availableBaits = await Baits.available(userAfterFish!)
 
 			const replyMessage = {
 				fish: `🐠 ${user.name} pescou um(a) *${fish.name}* de *${fish.weight / 1000}kg* com uma ${user.rod.name} ${user.rod.emoji}!`,
 				rarity: `\n\n⭐ Esse é um peixe *${fish.rarity.category}*`,
 				xp: `\n\n📈 Você ganhou *${xp}* pontos de xp!`,
-				remainXp: `\n\n> 👤 Faltam ${XP.next(userAfterStore!.rod, userAfterStore!.xp)} pontos de xp para o próximo nível`,
+				remainXp: `\n\n> 👤 Faltam ${XP.next(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
 				total: `\n> 🐟 Você já pescou ${stats.userTotal} de ${stats.total} peixes`,
 				rarestFish: stats.rarestFish
 					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`
@@ -93,23 +91,23 @@ export const fishing = async (user: UserType): Promise<string> => {
 			)
 		} else {
 			// Busca stats também quando pescar lixo
-			const remainTimeToNextBait = await Baits.time(userAfterFish!)
+			const remainTimeToNextBait = await Baits.time(userAfterBaitUpdate!)
 			const remainTimeToNextBaitFormatted =
 				formatRemainingTime(remainTimeToNextBait)
 
-			const totalStatus = await Fish.findTotal(userAfterFish!.fishesIds)
+			const totalStatus = await Fish.findTotal(userAfterBaitUpdate!.fishesIds)
 
 			const stats = {
 				userTotal: totalStatus.userTotal,
 				total: totalStatus.total,
-				rarestFish: await Fish.findRarest(userAfterFish!.fishesIds),
-				heavierFish: await Fish.findHeavier(userAfterFish!.fishesIds),
+				rarestFish: await Fish.findRarest(userAfterBaitUpdate!.fishesIds),
+				heavierFish: await Fish.findHeavier(userAfterBaitUpdate!.fishesIds),
 			}
-			const availableBaits = await Baits.available(userAfterFish!)
+			const availableBaits = await Baits.available(userAfterBaitUpdate!)
 
 			const replyMessage = {
 				trash: `${user.name} pescou um(a) *${trash!.name}* ${trash!.emoji}. ${trash!.description}`,
-				remainXp: `\n\n> 👤 Faltam ${XP.next(userAfterFish!.rod, userAfterFish!.xp)} pontos de xp para o próximo nível`,
+				remainXp: `\n\n> 👤 Faltam ${XP.next(userAfterBaitUpdate!.rod, userAfterBaitUpdate!.xp)} pontos de xp para o próximo nível`,
 				total: `\n> 🐟 Você já pescou ${stats.userTotal} de ${stats.total} peixes`,
 				rarestFish: stats.rarestFish
 					? `\n> 💎 Seu peixe mais raro é um(a) *${stats.rarestFish.name}* (${stats.rarestFish.rarity.category})`

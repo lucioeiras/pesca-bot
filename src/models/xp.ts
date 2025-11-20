@@ -41,23 +41,17 @@ export class XP {
 		currentRod: RodType,
 		currentXp: number,
 	): Promise<boolean> {
-		const rods = (await collections
-			.rods!.find({})
-			.toArray()) as unknown as RodType[]
-
-		const rodIndex = rods.findIndex((rod) => rod.name === currentRod.name)
-
-		if (rods[rodIndex] && rods[rodIndex].xpNext <= currentXp) {
+		if (currentRod.xpNext <= currentXp) {
 			return true
 		}
 
 		return false
 	}
 
-	static async levelUp(user: UserType, nextRod: RodType): Promise<void> {
+	static async levelUp(user: UserType, newRod: RodType): Promise<void> {
 		await collections.users?.updateOne(
 			{ _id: user._id },
-			{ $set: { rod: nextRod } },
+			{ $set: { rod: newRod } },
 		)
 	}
 }
